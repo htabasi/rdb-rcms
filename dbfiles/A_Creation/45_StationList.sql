@@ -1,0 +1,16 @@
+INSERT INTO RCMS.Station.StationList (Code, Availability) VALUES (N'ANK', 2);
+INSERT INTO RCMS.Station.StationList (Code, Availability) VALUES (N'AWZ', 2);
+INSERT INTO RCMS.Station.StationList (Code, Availability) VALUES (N'BJD', 2);
+INSERT INTO RCMS.Station.StationList (Code, Availability) VALUES (N'BND', 2);
+INSERT INTO RCMS.Station.StationList (Code, Availability) VALUES (N'BRG', 2);
+INSERT INTO RCMS.Station.StationList (Code, Availability) VALUES (N'BUZ', 2);
+INSERT INTO RCMS.Station.StationList (Code, Availability) VALUES (N'CBH', 2);
+INSERT INTO RCMS.Station.StationList (Code, Availability) VALUES (N'ISN', 2);
+INSERT INTO RCMS.Station.StationList (Code, Availability) VALUES (N'KIS', 2);
+INSERT INTO RCMS.Station.StationList (Code, Availability) VALUES (N'KMS', 2);
+INSERT INTO RCMS.Station.StationList (Code, Availability) VALUES (N'MSD', 2);
+INSERT INTO RCMS.Station.StationList (Code, Availability) VALUES (N'SYZ', 2);
+INSERT INTO RCMS.Station.StationList (Code, Availability) VALUES (N'TBZ', 2);
+INSERT INTO RCMS.Station.StationList (Code, Availability) VALUES (N'YZD', 2);
+INSERT INTO RCMS.Station.StationList (Code, Availability) VALUES (N'ZDN', 2);
+INSERT INTO RCMS.Station.StationList (Code, Availability) VALUES (N'WSP', 1);

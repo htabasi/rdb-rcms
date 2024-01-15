@@ -1,0 +1,1 @@
+Update Common.Radio SET IndicatorONSec={}, IndicatorOFFSec={}, ConnectTimeSec={}, DisconnectTimeSec={}, OperatingHour={} WHERE Radio.Radio_Name='{}';

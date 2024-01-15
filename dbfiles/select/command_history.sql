@@ -1,0 +1,1 @@
+SELECT id, CKey, Request, Value FROM Command.History WHERE Status=1 AND TargetRadio='{}' AND RegisterTime >= DATEADD(minute , -2, GETDATE());

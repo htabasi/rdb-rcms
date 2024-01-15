@@ -1,0 +1,1 @@
+Update Application.RadioModuleStatus SET {} Where id={};

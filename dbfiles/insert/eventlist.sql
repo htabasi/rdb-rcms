@@ -1,0 +1,1 @@
+INSERT INTO Event.EventList (Date, Radio_Name, Event_No, Module, EventDate, Code, Event_Text, Event_Level) VALUES ('{}', '{}', {}, {}, '{}', {}, '{}', {});

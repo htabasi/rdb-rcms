@@ -1,0 +1,1 @@
+INSERT INTO RCMS.Application.Configuration (Date, Status, ConnectionTryInterval, MaxDelaySettingFetch, PeriodicSettingCheck, PeriodicAgeUpdate, SessionWarningThreshold, NewCommand) VALUES (N'2023-05-17 10:06:22.213', 1, 60, 60, 1440, 5, 3, 0);

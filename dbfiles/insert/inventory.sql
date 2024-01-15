@@ -1,0 +1,1 @@
+INSERT INTO Setting.Inventory (Date, Radio_Name, R_Index, Type, Component_Name, Ident_Number, Variant, Production_Index, Serial_Number, Production_Date) VALUES ('{}', '{}', {}, {}, '{}', '{}', {}, '{}', '{}', '{}');

@@ -1,0 +1,1 @@
+INSERT INTO Event.ECBIT (Date, Radio_Name, Code, Name, Level) VALUES ('{}', '{}', {}, '{}', {});

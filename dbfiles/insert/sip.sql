@@ -1,0 +1,1 @@
+INSERT INTO Setting.IP (Date, Radio_Name, IP_Type, IP, Subnet, Gateway) VALUES ('{}', '{}', {}, '{}', '{}', '{}');

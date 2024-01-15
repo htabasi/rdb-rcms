@@ -1,0 +1,10 @@
+INSERT INTO RCMS.Application.Names (id, App, JobInformation) VALUES (1, N'Core', N'Main Class that full control other threads.');
+INSERT INTO RCMS.Application.Names (id, App, JobInformation) VALUES (2, N'Reception', N'The task of Reading from the Socket and preparation processes of the corresponding parameter and value is the responsibility of this section');
+INSERT INTO RCMS.Application.Names (id, App, JobInformation) VALUES (3, N'Transmission', N'The task of writing on the Socket, the processes of sending a command (reading from the database and sending to the radio)');
+INSERT INTO RCMS.Application.Names (id, App, JobInformation) VALUES (4, N'Generator', N'All processes related to updating database Data, Events & Configuration, by generating relevant queries are done in this section.');
+INSERT INTO RCMS.Application.Names (id, App, JobInformation) VALUES (5, N'Log', N'The processes related to log the activity of other parts are carried out by the Log unit.');
+INSERT INTO RCMS.Application.Names (id, App, JobInformation) VALUES (6, N'Interface', N'The UI provide an interface to control and monitor by user.');
+INSERT INTO RCMS.Application.Names (id, App, JobInformation) VALUES (7, N'Connector', N'Prepared queries are delivered to this part and applied in the database.');
+INSERT INTO RCMS.Application.Names (id, App, JobInformation) VALUES (8, N'Analyzer', N'A thread that collect and analyze RX & TX data and save them into database.');
+INSERT INTO RCMS.Application.Names (id, App, JobInformation) VALUES (9, N'Manager', N'Core Connector class that control connection, reception and transmission objects.');
+INSERT INTO RCMS.Application.Names (id, App, JobInformation) VALUES (10, N'Commander', N'Send Command to radio.');

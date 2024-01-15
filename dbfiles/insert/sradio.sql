@@ -1,0 +1,1 @@
+INSERT INTO Setting.SRadio (Date, Radio_Name, Record, {}) VALUES ('{}', '{}', {}, {});

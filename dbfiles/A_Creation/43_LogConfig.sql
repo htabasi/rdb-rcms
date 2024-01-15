@@ -1,0 +1,9 @@
+INSERT INTO RCMS.Application.LogConfig (App, FileLevel, StreamLevel, FileFormat, StreamFormat) VALUES (1, 20, 30, 2, 2);
+INSERT INTO RCMS.Application.LogConfig (App, FileLevel, StreamLevel, FileFormat, StreamFormat) VALUES (2, 20, 30, 2, 2);
+INSERT INTO RCMS.Application.LogConfig (App, FileLevel, StreamLevel, FileFormat, StreamFormat) VALUES (3, 20, 30, 2, 2);
+INSERT INTO RCMS.Application.LogConfig (App, FileLevel, StreamLevel, FileFormat, StreamFormat) VALUES (4, 20, 30, 2, 2);
+INSERT INTO RCMS.Application.LogConfig (App, FileLevel, StreamLevel, FileFormat, StreamFormat) VALUES (6, 20, 30, 2, 2);
+INSERT INTO RCMS.Application.LogConfig (App, FileLevel, StreamLevel, FileFormat, StreamFormat) VALUES (7, 20, 30, 2, 2);
+INSERT INTO RCMS.Application.LogConfig (App, FileLevel, StreamLevel, FileFormat, StreamFormat) VALUES (8, 20, 30, 2, 2);
+INSERT INTO RCMS.Application.LogConfig (App, FileLevel, StreamLevel, FileFormat, StreamFormat) VALUES (9, 20, 30, 2, 2);
+INSERT INTO RCMS.Application.LogConfig (App, FileLevel, StreamLevel, FileFormat, StreamFormat) VALUES (10, 10, 10, 2, 2);

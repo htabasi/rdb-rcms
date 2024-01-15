@@ -1,0 +1,10 @@
+INSERT INTO RCMS.Application.Timing (id, App, Timing) VALUES (1, 1, 0.5);
+INSERT INTO RCMS.Application.Timing (id, App, Timing) VALUES (2, 2, 0.5);
+INSERT INTO RCMS.Application.Timing (id, App, Timing) VALUES (3, 3, 0.5);
+INSERT INTO RCMS.Application.Timing (id, App, Timing) VALUES (4, 4, 3.0);
+INSERT INTO RCMS.Application.Timing (id, App, Timing) VALUES (5, 5, 3.0);
+INSERT INTO RCMS.Application.Timing (id, App, Timing) VALUES (6, 6, 3.0);
+INSERT INTO RCMS.Application.Timing (id, App, Timing) VALUES (7, 7, 3.0);
+INSERT INTO RCMS.Application.Timing (id, App, Timing) VALUES (8, 8, 0.5);
+INSERT INTO RCMS.Application.Timing (id, App, Timing) VALUES (9, 9, 1.0);
+INSERT INTO RCMS.Application.Timing (id, App, Timing) VALUES (10, 10, 5.0);

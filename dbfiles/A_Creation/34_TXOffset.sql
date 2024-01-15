@@ -1,0 +1,14 @@
+INSERT INTO RCMS.Common.TXOffset (id, Offset) VALUES (0, N'Off ');
+INSERT INTO RCMS.Common.TXOffset (id, Offset) VALUES (1, N'+7.5');
+INSERT INTO RCMS.Common.TXOffset (id, Offset) VALUES (2, N'+5.0');
+INSERT INTO RCMS.Common.TXOffset (id, Offset) VALUES (3, N'+2.5');
+INSERT INTO RCMS.Common.TXOffset (id, Offset) VALUES (4, N'0.0 ');
+INSERT INTO RCMS.Common.TXOffset (id, Offset) VALUES (5, N'-2.5');
+INSERT INTO RCMS.Common.TXOffset (id, Offset) VALUES (6, N'-5.0');
+INSERT INTO RCMS.Common.TXOffset (id, Offset) VALUES (7, N'-7.5');
+INSERT INTO RCMS.Common.TXOffset (id, Offset) VALUES (8, N'+8.0');
+INSERT INTO RCMS.Common.TXOffset (id, Offset) VALUES (9, N'+4.0');
+INSERT INTO RCMS.Common.TXOffset (id, Offset) VALUES (10, N'-4.0');
+INSERT INTO RCMS.Common.TXOffset (id, Offset) VALUES (11, N'-8.0');
+INSERT INTO RCMS.Common.TXOffset (id, Offset) VALUES (12, N'+7.3');
+INSERT INTO RCMS.Common.TXOffset (id, Offset) VALUES (13, N'-7.3');

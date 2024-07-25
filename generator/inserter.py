@@ -1,0 +1,27 @@
+from generator import get_file
+
+
+class InserterGenerator:
+    """
+    Base class For Generate SQL Statements
+    """
+
+    def __init__(self, radio, insert_query_file, acceptable_keys, log, special_key=None):
+        self.radio = radio
+        self.insert = get_file(insert_query_file)
+        self.acceptable_keys = acceptable_keys
+        if special_key is None:
+            self.special_key = []
+        else:
+            self.special_key = special_key
+        self.log = log
+
+    def generate(self, time_tag, key, value) -> list:
+        # self.log.debug(f"{self.__class__.__name__}: value={value}")
+        if key in self.special_key:
+            return self.generate_special(time_tag, key, value)
+        else:
+            return [self.insert.format(key, str(time_tag)[:23], self.radio.name, value)]
+
+    def generate_special(self, time_tagg, key, value) -> list:
+        return []

@@ -1,0 +1,1 @@
+INSERT INTO Event.EOperation (Date, Radio_Name, {}) VALUES ('{}', '{}', {});

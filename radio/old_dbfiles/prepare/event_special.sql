@@ -1,0 +1,1 @@
+Select TOP 1 * From Event.SpecialSetting WHERE Radio_Name='{}' AND Record=1 ORDER BY Date DESC;

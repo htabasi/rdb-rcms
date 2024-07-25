@@ -1,0 +1,1 @@
+INSERT INTO Event.EConnection (Date, Radio_Name, {}) VALUES ('{}', '{}', {});

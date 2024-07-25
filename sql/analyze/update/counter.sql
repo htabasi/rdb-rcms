@@ -1,0 +1,1 @@
+UPDATE Analyze.Counter SET {} WHERE Radio_Name='{}' AND RecordType='{}';

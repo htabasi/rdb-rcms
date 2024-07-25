@@ -1,0 +1,1 @@
+UPDATE Analyze.Timer SET {} WHERE Radio_Name='{}' AND RecordType='{}';

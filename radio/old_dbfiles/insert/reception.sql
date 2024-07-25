@@ -1,0 +1,1 @@
+INSERT INTO Event.Reception (Date, Radio_Name, {}) VALUES ('{}','{}', {});

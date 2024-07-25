@@ -1,0 +1,1 @@
+INSERT INTO Setting.Access (Date, Radio_Name, ACL_Index, Allowed_IP) VALUES ('{}', '{}', {}, '{}');

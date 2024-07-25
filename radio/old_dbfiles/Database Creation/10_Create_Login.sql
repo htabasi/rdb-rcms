@@ -1,0 +1,205 @@
+
+CREATE LOGIN rdbu WITH
+    PASSWORD = 'HadiTabasiAslAvval',
+    DEFAULT_DATABASE = RCMS,
+    CHECK_POLICY = OFF;
+GO
+
+ALTER SERVER ROLE  ##MS_DatabaseConnector##  ADD MEMBER rdbu;
+ALTER SERVER ROLE  ##MS_DatabaseManager##  ADD MEMBER rdbu;
+ALTER SERVER ROLE  ##MS_DefinitionReader##  ADD MEMBER rdbu;
+ALTER SERVER ROLE  ##MS_LoginManager##  ADD MEMBER rdbu;
+ALTER SERVER ROLE  ##MS_PerformanceDefinitionReader##  ADD MEMBER rdbu;
+ALTER SERVER ROLE  ##MS_SecurityDefinitionReader##  ADD MEMBER rdbu;
+ALTER SERVER ROLE  ##MS_ServerPerformanceStateReader##  ADD MEMBER rdbu;
+--ALTER SERVER ROLE  ##MS_ServerSecurityStateReader##  ADD MEMBER rdbu;
+ALTER SERVER ROLE  ##MS_ServerStateManager##  ADD MEMBER rdbu;
+ALTER SERVER ROLE  ##MS_ServerStateReader##  ADD MEMBER rdbu;
+ALTER SERVER ROLE  dbcreator  ADD MEMBER rdbu;
+ALTER SERVER ROLE  diskadmin  ADD MEMBER rdbu;
+ALTER SERVER ROLE  processadmin  ADD MEMBER rdbu;
+ALTER SERVER ROLE  securityadmin  ADD MEMBER rdbu;
+ALTER SERVER ROLE  serveradmin  ADD MEMBER rdbu;
+ALTER SERVER ROLE  setupadmin  ADD MEMBER rdbu;
+GO
+
+Use RCMS;
+CREATE USER rdbu FOR LOGIN rdbu
+    WITH DEFAULT_SCHEMA = Django;
+
+--ALTER USER rdbu
+-- WITH
+-- DEFAULT_SCHEMA = Django,
+-- LOGIN = rdbu;
+
+USE [RCMS]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[Application] TO [rdbu]
+GO
+USE [RCMS]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[Command] TO [rdbu]
+GO
+USE [RCMS]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[Common] TO [rdbu]
+GO
+USE [RCMS]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[db_accessadmin] TO [rdbu]
+GO
+USE [RCMS]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[db_backupoperator] TO [rdbu]
+GO
+USE [RCMS]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[db_datareader] TO [rdbu]
+GO
+USE [RCMS]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[db_datawriter] TO [rdbu]
+GO
+USE [RCMS]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[db_ddladmin] TO [rdbu]
+GO
+USE [RCMS]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[db_owner] TO [rdbu]
+GO
+USE [RCMS]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[db_securityadmin] TO [rdbu]
+GO
+USE [RCMS]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[Django] TO [rdbu]
+GO
+USE [RCMS]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[Event] TO [rdbu]
+GO
+USE [RCMS]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[Radio] TO [rdbu]
+GO
+USE [RCMS]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[Setting] TO [rdbu]
+GO
+USE [RCMS]
+GO
+ALTER ROLE [db_accessadmin] ADD MEMBER [rdbu]
+GO
+USE [RCMS]
+GO
+ALTER ROLE [db_backupoperator] ADD MEMBER [rdbu]
+GO
+USE [RCMS]
+GO
+ALTER ROLE [db_datareader] ADD MEMBER [rdbu]
+GO
+USE [RCMS]
+GO
+ALTER ROLE [db_datawriter] ADD MEMBER [rdbu]
+GO
+USE [RCMS]
+GO
+ALTER ROLE [db_ddladmin] ADD MEMBER [rdbu]
+GO
+USE [RCMS]
+GO
+ALTER ROLE [db_owner] ADD MEMBER [rdbu]
+GO
+
+Use RCMS_OLD;
+CREATE USER rdbu FOR LOGIN rdbu
+    WITH DEFAULT_SCHEMA = Django;
+
+--ALTER USER rdbu
+-- WITH
+-- DEFAULT_SCHEMA = Django,
+-- LOGIN = rdbu;
+
+USE [RCMS_OLD]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[Application] TO [rdbu]
+GO
+USE [RCMS_OLD]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[Command] TO [rdbu]
+GO
+USE [RCMS_OLD]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[Common] TO [rdbu]
+GO
+USE [RCMS_OLD]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[db_accessadmin] TO [rdbu]
+GO
+USE [RCMS_OLD]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[db_backupoperator] TO [rdbu]
+GO
+USE [RCMS_OLD]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[db_datareader] TO [rdbu]
+GO
+USE [RCMS_OLD]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[db_datawriter] TO [rdbu]
+GO
+USE [RCMS_OLD]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[db_ddladmin] TO [rdbu]
+GO
+USE [RCMS_OLD]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[db_owner] TO [rdbu]
+GO
+USE [RCMS_OLD]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[db_securityadmin] TO [rdbu]
+GO
+USE [RCMS_OLD]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[Django] TO [rdbu]
+GO
+USE [RCMS_OLD]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[Event] TO [rdbu]
+GO
+USE [RCMS_OLD]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[Station] TO [rdbu]
+GO
+USE [RCMS_OLD]
+GO
+ALTER AUTHORIZATION ON SCHEMA::[Setting] TO [rdbu]
+GO
+USE [RCMS_OLD]
+GO
+ALTER ROLE [db_accessadmin] ADD MEMBER [rdbu]
+GO
+USE [RCMS_OLD]
+GO
+ALTER ROLE [db_backupoperator] ADD MEMBER [rdbu]
+GO
+USE [RCMS_OLD]
+GO
+ALTER ROLE [db_datareader] ADD MEMBER [rdbu]
+GO
+USE [RCMS_OLD]
+GO
+ALTER ROLE [db_datawriter] ADD MEMBER [rdbu]
+GO
+USE [RCMS_OLD]
+GO
+ALTER ROLE [db_ddladmin] ADD MEMBER [rdbu]
+GO
+USE [RCMS_OLD]
+GO
+ALTER ROLE [db_owner] ADD MEMBER [rdbu]
+GO
+

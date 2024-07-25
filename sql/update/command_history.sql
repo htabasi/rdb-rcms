@@ -1,0 +1,1 @@
+Update Command.History SET SentTime='{}', Status={} WHERE id={};

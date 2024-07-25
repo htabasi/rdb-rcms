@@ -1,0 +1,1 @@
+INSERT INTO Setting.Network (Date, Radio_Name, Record, {}) VALUES ('{}', '{}', {}, {});

@@ -1,0 +1,1 @@
+INSERT INTO Setting.Configuration (Date, Radio_Name, Record, {}) VALUES ('{}', '{}', {}, {});

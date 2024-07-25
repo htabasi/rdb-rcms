@@ -1,0 +1,1 @@
+INSERT INTO Event.EAdjustment (Date, Radio_Name, {}) VALUES ('{}', '{}', {});

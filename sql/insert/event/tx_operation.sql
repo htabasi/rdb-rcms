@@ -1,0 +1,1 @@
+INSERT INTO Event.TXOperation (Date, Radio_Name, {}) VALUES ('{}', '{}', {});

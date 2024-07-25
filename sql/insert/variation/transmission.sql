@@ -1,0 +1,1 @@
+INSERT INTO Variation.Transmission (Date, Radio_Name, {}) VALUES ('{}', '{}', {});

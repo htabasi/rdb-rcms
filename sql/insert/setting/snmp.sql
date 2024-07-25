@@ -1,0 +1,1 @@
+INSERT INTO Setting.SNMP (Date, Radio_Name, Record, {}) VALUES ('{}', '{}', {}, {});

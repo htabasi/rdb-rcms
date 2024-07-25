@@ -1,0 +1,1 @@
+INSERT INTO Variation.Voltage (Date, Radio_Name, Battery_Volt, DC_Section) VALUES ('{}', '{}', {});

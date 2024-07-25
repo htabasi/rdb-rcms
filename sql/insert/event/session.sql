@@ -1,0 +1,1 @@
+INSERT INTO Event.Session (Date, Radio_Name, IP, Client, Type) VALUES ('{}', '{}', '{}', {}, {});

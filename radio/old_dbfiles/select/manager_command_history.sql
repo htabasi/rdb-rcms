@@ -1,0 +1,1 @@
+SELECT id, Station, Frequency_No, Sector, RadioType, MainStandby, CKey, Request, Value FROM Command.ManagerHistory WHERE Status=1 AND RegisterTime >= DATEADD(minute , -2, GETDATE());

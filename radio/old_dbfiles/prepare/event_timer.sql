@@ -1,0 +1,1 @@
+Select ConnectTimeSec, DisconnectTimeSec, IndicatorONSec, IndicatorOFFSec FROM Event.Timer WHERE Radio_Name='{}';

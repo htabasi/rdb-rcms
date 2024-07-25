@@ -1,0 +1,1 @@
+INSERT INTO Event.ERadio (Date, Radio_Name, {}) VALUES ('{}', '{}', {});

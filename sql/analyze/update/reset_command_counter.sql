@@ -1,0 +1,1 @@
+UPDATE Analyze.ResetCommand SET ResetCounter=0 WHERE Radio_Name='{}';

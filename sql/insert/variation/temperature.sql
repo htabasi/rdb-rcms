@@ -1,0 +1,1 @@
+INSERT INTO Variation.Temperature (Date, Radio_Name, RM_Temp, PS_Temp, PA_Temp) VALUES ('{}', '{}', {});

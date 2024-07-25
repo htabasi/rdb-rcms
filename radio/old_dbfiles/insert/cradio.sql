@@ -1,0 +1,1 @@
+INSERT INTO RCMS.Radio.Radio (Name, Station, Frequency_No, Sector, RadioType, MainStandBy, IP) VALUES {}

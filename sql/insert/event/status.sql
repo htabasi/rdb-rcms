@@ -1,0 +1,1 @@
+INSERT INTO Event.EStatus (Date, Radio_Name, {}) VALUES ('{}', '{}', {});

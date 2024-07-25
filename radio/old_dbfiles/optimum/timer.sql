@@ -1,0 +1,1 @@
+Update Event.Timer SET ConnectTimeSec={}, DisconnectTimeSec={} WHERE Timer.Radio_Name='{}';

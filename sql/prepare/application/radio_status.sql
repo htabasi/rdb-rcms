@@ -1,0 +1,1 @@
+Select * From Application.RadioStatus Where Radio_Name='{}';

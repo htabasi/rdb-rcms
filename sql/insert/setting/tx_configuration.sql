@@ -1,0 +1,1 @@
+INSERT INTO Setting.TXConfiguration (Date, Radio_Name, Record, {}) VALUES ('{}', '{}', {}, {});

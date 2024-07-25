@@ -1,0 +1,1 @@
+SELECT Name, IP FROM RCMS.Radio.Radio WHERE Station = '{}' ORDER BY Name;

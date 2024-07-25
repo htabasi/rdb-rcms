@@ -1,0 +1,1 @@
+INSERT INTO Event.RXOperation (Date, Radio_Name, {}) VALUES ('{}', '{}', {});

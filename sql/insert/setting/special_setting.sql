@@ -1,0 +1,1 @@
+INSERT INTO Event.SpecialSetting (Date, Radio_Name, Record, {}) VALUES ('{}', '{}', {}, {});

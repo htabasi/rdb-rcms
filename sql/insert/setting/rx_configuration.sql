@@ -1,0 +1,1 @@
+INSERT INTO Setting.RXConfiguration (Date, Radio_Name, Record, {}) VALUES ('{}', '{}', {}, {});

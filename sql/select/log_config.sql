@@ -1,0 +1,1 @@
+SELECT AN.App, ALC.FileLevel, ALC.FileFormat, ALC.StreamLevel, ALC.StreamFormat FROM Application.LogConfig ALC JOIN Application.Names AN on AN.id = ALC.App WHERE ALC.RunMode={};

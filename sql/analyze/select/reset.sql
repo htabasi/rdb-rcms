@@ -1,0 +1,1 @@
+SELECT ResetCounter, ResetTimer From Analyze.ResetCommand WHERE Radio_Name='{}';

@@ -1,0 +1,1 @@
+INSERT INTO Common.CBITList (CBIT_Code, Level, Description, Configuration, Selectable) VALUES ({}, {}, '{}', {}, {});

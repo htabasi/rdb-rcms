@@ -1,0 +1,1 @@
+Select TOP 1 * From Application.Configuration WHERE Status=1 ORDER BY Date DESC;

@@ -1,0 +1,1 @@
+UPDATE Analyze.ResettableTimer SET IndicatorONSec='{}', IndicatorOFFSec='{}', ConnectTimeSec='{}', DisconnectTimeSec='{}', OperatingHour='{}' WHERE Radio_Name='{}';

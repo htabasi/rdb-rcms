@@ -1,0 +1,1 @@
+Select TOP 1 * From Setting.SRadio WHERE Radio_Name='{}' AND Record=1 ORDER BY Date DESC;

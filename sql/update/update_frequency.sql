@@ -1,0 +1,1 @@
+UPDATE Radio.Radio SET Radio.Sector=(Select id From Radio.Sector Where Sector.Frequency={}) WHERE Radio.Name='{}';

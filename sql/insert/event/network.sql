@@ -1,0 +1,1 @@
+INSERT INTO Event.ENetwork (Date, Radio_Name, {}) VALUES ('{}', '{}', {});

@@ -1,0 +1,1 @@
+INSERT INTO Event.Timer (Radio_Name) VALUES ('{}');

@@ -1,0 +1,1 @@
+INSERT INTO Event.SetCommands (Date, Radio_Name, CKey, UserID, Action, Comment) VALUES ('{}', '{}', '{}', {}, {}, '{}');

@@ -1,0 +1,1 @@
+UPDATE Analyze.Timer SET ResetDate='{}', IndicatorONSec='0.0', IndicatorOFFSec='0.0', ConnectTimeSec='0.0', DisconnectTimeSec='0.0' WHERE Radio_Name='{}' AND RecordType=1;

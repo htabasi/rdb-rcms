@@ -1,1 +1,1 @@
-INSERT INTO Event.Session (Date, Radio_Name, IP, Client, Type) VALUES ('{}', '{}', '{}', {}, {});
+INSERT INTO Event.Session (Date, Radio_Name, IP, Client, Type, SessionNumber) VALUES ('{}', '{}', '{}', {}, {}, {});

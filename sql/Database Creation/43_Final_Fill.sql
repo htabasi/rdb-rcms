@@ -257,3 +257,133 @@ INSERT INTO Final.FSTXConfiguration
 SELECT Radio_Name,  AICA, AIML, GRAS, GRCO, GREX, RCDP, RIPC, RIVL, RIVP
 FROM RadioCTE;
 GO
+
+--**--**--**--**--**--**--**--**--**--**--**--**--**--**--**--**--**--**--**--**--
+
+WITH SessionCTE AS (
+    SELECT
+        Radio_Name,
+        MAX(Date) AS LatestDate
+    From Event.Session
+    GROUP BY Radio_Name
+)
+INSERT INTO Final.FESession
+    (Date, Radio_Name, IP, Client, Type, SessionNumber)
+SELECT ES.Date, ES.Radio_Name, ES.IP, ES.Client, ES.Type, ES.SessionNumber
+FROM Event.Session ES
+INNER JOIN SessionCTE SC ON
+    SC.Radio_Name = ES.Radio_Name AND
+    SC.LatestDate = ES.Date;
+GO
+
+WITH ECBITCTE AS (
+    SELECT
+        Radio_Name,
+        MAX(Date) As LatestDate
+    FROM Event.ECBIT
+    GROUP BY Radio_Name
+)
+INSERT INTO Final.FECBIT
+       (Date, Radio_Name, Code, Name, Level)
+SELECT EEC.Date, EEC.Radio_Name, EEC.Code, EEC.Name, EEC.Level
+FROM Event.ECBIT EEC
+INNER JOIN ECBITCTE ECT ON
+    ECT.Radio_Name = EEC.Radio_Name AND
+    ECT.LatestDate = EEC.Date;
+GO
+
+WITH SAccessCTE AS (
+    SELECT
+        Radio_Name,
+        MAX(Date) As LatestDate
+    FROM Setting.Access
+    GROUP BY Radio_Name
+)
+INSERT INTO Final.FSAccess
+       (Radio_Name, ACL_Index, Allowed_IP)
+SELECT SA.Radio_Name, SA.ACL_Index, SA.Allowed_IP
+FROM Setting.Access SA
+INNER JOIN SAccessCTE SAT ON
+    SAT.Radio_Name = SA.Radio_Name AND
+    SAT.LatestDate = SA.Date
+ORDER BY SA.Radio_Name, SA.ACL_Index;
+GO
+
+WITH SInventoryCTE AS (
+    SELECT
+        Radio_Name,
+        R_Index,
+        Max(Date) AS LatestDate
+    FROM Setting.Inventory
+    GROUP BY Radio_Name, R_Index
+)
+INSERT INTO Final.FSInventory
+    (Date, Radio_Name, R_Index, Type, Component_Name, Ident_Number, Variant, Production_Index, Serial_Number, Production_Date)
+SELECT SIY.Date, SIY.Radio_Name, SIY.R_Index, SIY.Type, SIY.Component_Name, SIY.Ident_Number, SIY.Variant,
+       SIY.Production_Index, SIY.Serial_Number, SIY.Production_Date
+FROM Setting.Inventory SIY
+INNER JOIN SInventoryCTE SIC ON
+    SIC.Radio_Name = SIY.Radio_Name AND
+    SIC.R_Index = SIY.R_Index AND
+    SIC.LatestDate = SIY.Date
+ORDER BY SIY.Radio_Name, SIY.R_Index;
+GO
+
+-- DELETE From Final.FSSoftware
+
+WITH SIPCTE AS (
+    SELECT
+        Radio_Name,
+        IP_Type,
+        Max(Date) AS LatestDate
+    FROM Setting.IP
+    GROUP BY Radio_Name, IP_Type
+)
+INSERT INTO Final.FSIP
+    (Date, Radio_Name, IP_Type, IP, Subnet, Gateway)
+SELECT SIP.Date, SIP.Radio_Name, SIP.IP_Type, SIP.IP, SIP.Subnet, SIP.Gateway
+FROM Setting.IP SIP
+INNER JOIN SIPCTE SIC ON
+    SIC.Radio_Name = SIP.Radio_Name AND
+    SIC.IP_Type = SIP.IP_Type AND
+    SIC.LatestDate = SIP.Date
+ORDER BY SIP.Radio_Name, SIP.IP_Type
+GO
+
+
+WITH SCBITCTE AS (
+    SELECT
+        Radio_Name,
+        CBIT_Code,
+        Max(Date) AS LatestDate
+    FROM Setting.SCBIT
+    GROUP BY Radio_Name, CBIT_Code
+)
+INSERT INTO Final.FSCBIT
+    (Date, Radio_Name, CBIT_Code, Configuration)
+SELECT SSC.Date, SSC.Radio_Name, SSC.CBIT_Code, SSC.Configuration
+FROM Setting.SCBIT SSC
+INNER JOIN SCBITCTE SCC ON
+    SCC.Radio_Name = SSC.Radio_Name AND
+    SCC.CBIT_Code = SSC.CBIT_Code AND
+    SCC.LatestDate = SSC.Date
+ORDER BY SSC.Radio_Name, SSC.CBIT_Code;
+GO
+
+
+WITH SSoftwareCTE AS (
+    SELECT
+        Radio_Name,
+        MAX(Date) As LatestDate
+    FROM Setting.Software
+    GROUP BY Radio_Name
+)
+INSERT INTO Final.FSSoftware
+       (Date, Radio_Name, Partition, Part_Number, Version, Status)
+SELECT SSO.Date, SSO.Radio_Name, SSO.Partition, SSO.Part_Number, SSO.Version, SSO.Status
+FROM Setting.Software SSO
+INNER JOIN SSoftwareCTE SST ON
+    SST.Radio_Name = SSO.Radio_Name AND
+    SST.LatestDate = SSO.Date
+ORDER BY SSO.Radio_Name, SSO.Partition;
+GO

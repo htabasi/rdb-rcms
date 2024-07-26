@@ -756,4 +756,174 @@ UPDATE FSTXC SET FSTXC.RIVP = I.RIVP
 END;
 GO
 
+--**--**--**--**--**--**--**--**--**--**--**--**--**--**--**--**--**--**--**--**--
 
+CREATE TRIGGER trg_UpdateFESession
+ON Event.Session
+AFTER INSERT
+AS
+    BEGIN
+        DECLARE @RN CHAR(10);
+        DECLARE @DT DATETIME;
+        SELECT @RN=Radio_Name, @DT=Date FROM inserted;
+
+        DELETE FROM Final.FESession
+               WHERE Radio_Name=@RN AND
+                     Date < @DT;
+
+        INSERT INTO Final.FESession
+            (Date, Radio_Name, IP, Client, Type, SessionNumber)
+        SELECT Date, Radio_Name, IP, Client, Type, SessionNumber
+        FROM inserted
+    END;
+GO
+
+
+CREATE TRIGGER trg_UpdateFECBIT
+ON Event.ECBIT
+AFTER INSERT
+AS
+    BEGIN
+        DECLARE @RN CHAR(10);
+        DECLARE @DT DATETIME;
+        SELECT @RN=Radio_Name, @DT=Date FROM inserted;
+
+        DELETE FROM Final.FECBIT
+               WHERE Radio_Name=@RN AND
+                     Date < @DT;
+
+        INSERT INTO Final.FECBIT
+            ([Date], [Radio_Name], [Code], [Name], [Level])
+        SELECT [Date], [Radio_Name], [Code], [Name], [Level]
+        FROM inserted
+    END;
+GO
+
+CREATE TRIGGER trg_UpdateFSAccess
+ON Setting.Access
+AFTER INSERT
+AS
+    BEGIN
+        MERGE INTO Final.FSAccess AS Target
+        USING inserted AS Source
+        ON Target.Radio_Name = Source.Radio_Name AND Target.ACL_Index = Source.ACL_Index
+
+        WHEN MATCHED THEN
+            UPDATE SET Target.Allowed_IP=Source.Allowed_IP
+        WHEN NOT MATCHED THEN
+            INSERT (Radio_Name, ACL_Index, Allowed_IP)
+            VALUES (Source.Radio_Name, Source.ACL_Index, Source.Allowed_IP);
+    END;
+GO
+
+CREATE TRIGGER trg_UpdateFSInventory
+ON Setting.Inventory
+AFTER INSERT
+AS
+    BEGIN
+        MERGE INTO Final.FSInventory AS Target
+        USING inserted AS Source
+        ON Target.Radio_Name = Source.Radio_Name AND Target.R_Index=Source.R_Index
+
+        WHEN MATCHED THEN
+            UPDATE SET Target.Date=Source.Date,
+                       Target.Type=Source.Type,
+                       Target.Component_Name=Source.Component_Name,
+                       Target.Ident_Number=Source.Ident_Number,
+                       Target.Variant=Source.Variant,
+                       Target.Production_Index=Source.Production_Index,
+                       Target.Serial_Number=Source.Serial_Number,
+                       Target.Production_Date=Source.Production_Date
+        WHEN NOT MATCHED THEN
+            INSERT (Date, Radio_Name, R_Index, Type, Component_Name, Ident_Number,
+                    Variant, Production_Index, Serial_Number, Production_Date)
+            VALUES (Source.Date, Source.Radio_Name, Source.R_Index, Source.Type,
+                    Source.Component_Name, Source.Ident_Number, Source.Variant,
+                    Source.Production_Index, Source.Serial_Number, Source.Production_Date);
+    END;
+GO
+
+CREATE TRIGGER trg_UpdateFSIP
+ON Setting.IP
+AFTER INSERT
+AS
+    BEGIN
+        MERGE INTO Final.FSIP AS Target
+        USING inserted AS Source
+        ON Target.Radio_Name = Source.Radio_Name AND Target.IP_Type=Source.IP_Type
+
+        WHEN MATCHED THEN
+            UPDATE SET Target.Date=Source.Date,
+                       Target.IP=Source.IP,
+                       Target.Subnet=Source.Subnet,
+                       Target.Gateway=Source.Gateway
+        WHEN NOT MATCHED THEN
+            INSERT (Date, Radio_Name, IP_Type, IP, Subnet, Gateway)
+            VALUES (Source.Date, Source.Radio_Name, Source.IP_Type, Source.IP, Source.Subnet, Source.Gateway);
+    END;
+GO
+
+CREATE TRIGGER trg_UpdateFSCBIT
+ON Setting.SCBIT
+AFTER INSERT
+AS
+    BEGIN
+        MERGE INTO Final.FSCBIT AS Target
+        USING inserted AS Source
+        ON Target.Radio_Name = Source.Radio_Name AND Target.CBIT_Code = Source.CBIT_Code
+
+        WHEN MATCHED THEN
+            UPDATE SET Target.Date = Source.Date, Target.Configuration = Source.Configuration
+
+        WHEN NOT MATCHED THEN
+            INSERT (Date, Radio_Name, CBIT_Code, Configuration)
+            VALUES (Source.Date, Source.Radio_Name, Source.CBIT_Code, Source.Configuration);
+    END;
+GO
+
+CREATE TRIGGER trg_UpdateFSSoftware
+ON Setting.Software
+AFTER INSERT
+AS
+    BEGIN
+        MERGE INTO Final.FSSoftware AS Target
+        USING inserted AS Source
+        ON Target.Radio_Name = Source.Radio_Name AND Target.Partition = Source.Partition
+
+        WHEN MATCHED THEN
+            UPDATE SET Target.Date = Source.Date,
+                       Target.Part_Number = Source.Part_Number,
+                       Target.Version = Source.Version,
+                       Target.Status = Source.Status
+        WHEN NOT MATCHED THEN
+            INSERT (Date, Radio_Name, Partition, Part_Number, Version, Status)
+            VALUES (Source.Date, Source.Radio_Name, Source.Partition,
+                    Source.Part_Number, Source.Version, Source.Status);
+    END;
+GO
+
+CREATE TRIGGER trg_RRadio
+ON Radio.Radio
+AFTER INSERT
+AS
+    BEGIN
+        INSERT INTO Final.FEAdjustment (Radio_Name) VALUES inserted.Name;
+        INSERT INTO Final.FEConnection (Radio_Name) VALUES inserted.Name;
+        INSERT INTO Final.FENetwork (Radio_Name) VALUES inserted.Name;
+        INSERT INTO Final.FEOperation (Radio_Name) VALUES inserted.Name;
+        INSERT INTO Final.FEStatus (Radio_Name) VALUES inserted.Name;
+        INSERT INTO Final.FSConfiguration (Radio_Name) VALUES inserted.Name;
+        INSERT INTO Final.FSInstallation (Radio_Name) VALUES inserted.Name;
+        INSERT INTO Final.FSNetwork (Radio_Name) VALUES inserted.Name;
+        INSERT INTO Final.FSSNMP (Radio_Name) VALUES inserted.Name;
+        INSERT INTO Final.FSStatus (Radio_Name) VALUES inserted.Name;
+
+        IF inserted.RadioType=1 BEGIN
+            INSERT INTO Final.FETXOperation (Radio_Name) VALUES inserted.Name;
+            INSERT INTO Final.FESpecialSetting (Radio_Name) VALUES inserted.Name;
+            INSERT INTO Final.FSTXConfiguration (Radio_Name) VALUES inserted.Name;
+        END ELSE BEGIN
+            INSERT INTO Final.FERXOperation (Radio_Name) VALUES inserted.Name;
+            INSERT INTO Final.FSRXConfiguration (Radio_Name) VALUES inserted.Name;
+        END
+    END;

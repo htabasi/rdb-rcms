@@ -94,6 +94,7 @@ CREATE TABLE Event.Session
     IP         VARCHAR(15) NOT NULL,
     Client     TINYINT     NOT NULL FOREIGN KEY REFERENCES Common.Controller (id),
     Type       TINYINT     NOT NULL FOREIGN KEY REFERENCES Common.SessionType (id),
+    SessionNumber TINYINT NOT NULL
 );
 GO
 

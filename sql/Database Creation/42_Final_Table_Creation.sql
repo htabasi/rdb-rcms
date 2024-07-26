@@ -6,14 +6,14 @@ GO
 
 CREATE TABLE Final.FEAdjustment
 (
-    id         INT      NOT NULL IDENTITY PRIMARY KEY CLUSTERED,
-    Radio_Name CHAR(10) NOT NULL UNIQUE FOREIGN KEY REFERENCES Radio.Radio (Name),
-    AIAD       TINYINT       NULL,
-    AILA       SMALLINT      NULL,
-    AISL       SMALLINT      NULL,
-    GRME       DATETIME      NULL,
-    GRUI       VARCHAR(10)   NULL,
-    GRUO       VARCHAR(10)   NULL
+    id         INT         NOT NULL IDENTITY PRIMARY KEY CLUSTERED,
+    Radio_Name CHAR(10)    NOT NULL UNIQUE FOREIGN KEY REFERENCES Radio.Radio (Name),
+    AIAD       TINYINT     NULL,
+    AILA       SMALLINT    NULL,
+    AISL       SMALLINT    NULL,
+    GRME       DATETIME    NULL,
+    GRUI       VARCHAR(10) NULL,
+    GRUO       VARCHAR(10) NULL
 );
 GO
 
@@ -27,12 +27,12 @@ GO
 
 CREATE TABLE Final.FENetwork
 (
-    id         INT      NOT NULL IDENTITY PRIMARY KEY CLUSTERED,
-    Radio_Name CHAR(10) NOT NULL UNIQUE FOREIGN KEY REFERENCES Radio.Radio (Name),
-    GRHN       VARCHAR(24)   NULL,
-    GRNA       TINYINT       NULL FOREIGN KEY REFERENCES Common.Activation (id),
-    SCPG       SMALLINT      NULL,
-    SCSS       TINYINT       NULL FOREIGN KEY REFERENCES Common.SessionType (id)
+    id         INT         NOT NULL IDENTITY PRIMARY KEY CLUSTERED,
+    Radio_Name CHAR(10)    NOT NULL UNIQUE FOREIGN KEY REFERENCES Radio.Radio (Name),
+    GRHN       VARCHAR(24) NULL,
+    GRNA       TINYINT     NULL FOREIGN KEY REFERENCES Common.Activation (id),
+    SCPG       SMALLINT    NULL,
+    SCSS       TINYINT     NULL FOREIGN KEY REFERENCES Common.SessionType (id)
 );
 GO
 
@@ -40,12 +40,12 @@ CREATE TABLE Final.FEOperation
 (
     id         INT      NOT NULL IDENTITY PRIMARY KEY CLUSTERED,
     Radio_Name CHAR(10) NOT NULL UNIQUE FOREIGN KEY REFERENCES Radio.Radio (Name),
-    ERGN       TINYINT       NULL FOREIGN KEY REFERENCES Common.Operation (id),
-    FFMD       TINYINT       NULL FOREIGN KEY REFERENCES Common.ModulationMode (id),
-    FFSP       TINYINT       NULL FOREIGN KEY REFERENCES Common.ChannelSpacing (id),
-    FFTR       INT           NULL,
-    MSAC       TINYINT       NULL FOREIGN KEY REFERENCES Common.Activation (id),
-    RCPP       TINYINT       NULL
+    ERGN       TINYINT  NULL FOREIGN KEY REFERENCES Common.Operation (id),
+    FFMD       TINYINT  NULL FOREIGN KEY REFERENCES Common.ModulationMode (id),
+    FFSP       TINYINT  NULL FOREIGN KEY REFERENCES Common.ChannelSpacing (id),
+    FFTR       INT      NULL,
+    MSAC       TINYINT  NULL FOREIGN KEY REFERENCES Common.Activation (id),
+    RCPP       TINYINT  NULL
 );
 GO
 
@@ -61,12 +61,12 @@ GO
 
 CREATE TABLE Final.FERXOperation
 (
-    id         INT      NOT NULL IDENTITY PRIMARY KEY CLUSTERED,
-    Radio_Name CHAR(10) NOT NULL UNIQUE FOREIGN KEY REFERENCES Radio.Radio (Name),
-    FFSN       TINYINT       NULL,
-    FFSQ       TINYINT       NULL FOREIGN KEY REFERENCES Common.OnOff (id),
-    FFSR       TINYINT       NULL,
-    RIRC       VARCHAR(30)   NULL,
+    id         INT         NOT NULL IDENTITY PRIMARY KEY CLUSTERED,
+    Radio_Name CHAR(10)    NOT NULL UNIQUE FOREIGN KEY REFERENCES Radio.Radio (Name),
+    FFSN       TINYINT     NULL,
+    FFSQ       TINYINT     NULL FOREIGN KEY REFERENCES Common.OnOff (id),
+    FFSR       TINYINT     NULL,
+    RIRC       VARCHAR(30) NULL,
 );
 GO
 
@@ -87,7 +87,7 @@ CREATE TABLE Final.FETXOperation
 (
     id         INT      NOT NULL IDENTITY PRIMARY KEY CLUSTERED,
     Radio_Name CHAR(10) NOT NULL UNIQUE FOREIGN KEY REFERENCES Radio.Radio (Name),
-    RCMG       TINYINT       NULL
+    RCMG       TINYINT  NULL
 );
 GO
 
@@ -186,3 +186,87 @@ CREATE TABLE Final.FSTXConfiguration
     RIVP       TINYINT       NULL FOREIGN KEY REFERENCES Common.EVSWRPolarity (id)
 );
 GO
+
+--**--**--**--**--**--**--**--**--**--**--**--**--**--**--**--**--**--**--**--**--
+
+CREATE TABLE Final.FESession
+(
+    id            INT         NOT NULL IDENTITY PRIMARY KEY CLUSTERED,
+    Date          DATETIME    NOT NULL DEFAULT GETDATE(),
+    Radio_Name    CHAR(10)    NOT NULL FOREIGN KEY REFERENCES Radio.Radio (Name),
+    IP            VARCHAR(15) NOT NULL,
+    Client        TINYINT     NOT NULL FOREIGN KEY REFERENCES Common.Controller (id),
+    Type          TINYINT     NOT NULL FOREIGN KEY REFERENCES Common.SessionType (id),
+    SessionNumber TINYINT     NOT NULL
+);
+GO
+
+CREATE TABLE Final.FECBIT
+(
+    id         INT         NOT NULL IDENTITY PRIMARY KEY CLUSTERED,
+    Date       DATETIME    NOT NULL,
+    Radio_Name CHAR(10)    NOT NULL FOREIGN KEY REFERENCES Radio.Radio (Name),
+    Code       SMALLINT    NOT NULL,
+    Name       VARCHAR(30) NOT NULL,
+    Level      TINYINT     NOT NULL FOREIGN KEY REFERENCES Common.EventLevel (id)
+);
+GO
+
+CREATE TABLE Final.FSAccess
+(
+    id         INT         NOT NULL IDENTITY PRIMARY KEY CLUSTERED,
+    Radio_Name CHAR(10)    NOT NULL FOREIGN KEY REFERENCES Radio.Radio (Name),
+    ACL_Index  TINYINT     NOT NULL DEFAULT 1,
+    Allowed_IP VARCHAR(15) NOT NULL DEFAULT ''
+);
+GO
+
+CREATE TABLE Final.FSInventory
+(
+    id               INT         NOT NULL IDENTITY PRIMARY KEY CLUSTERED,
+    Date             DATETIME    NOT NULL,
+    Radio_Name       CHAR(10)    NOT NULL FOREIGN KEY REFERENCES Radio.Radio (Name),
+    R_Index          TINYINT     NOT NULL,
+    Type             TINYINT     NOT NULL FOREIGN KEY REFERENCES Common.RadioModule (id),
+    Component_Name   VARCHAR(20) NOT NULL,
+    Ident_Number     CHAR(9)     NOT NULL,
+    Variant          TINYINT     NOT NULL,
+    Production_Index CHAR(5)     NOT NULL,
+    Serial_Number    CHAR(6)     NOT NULL,
+    Production_Date  DATE        NOT NULL
+);
+GO
+
+CREATE TABLE Final.FSIP
+(
+    id         INT         NOT NULL IDENTITY PRIMARY KEY CLUSTERED,
+    Date       DATETIME    NOT NULL,
+    Radio_Name CHAR(10)    NOT NULL FOREIGN KEY REFERENCES Radio.Radio (Name),
+    IP_Type    TINYINT     NOT NULL FOREIGN KEY REFERENCES Common.IPType (id),
+    IP         VARCHAR(15) NOT NULL,
+    Subnet     VARCHAR(15) NOT NULL,
+    Gateway    VARCHAR(15) NULL
+);
+GO
+
+CREATE TABLE Final.FSCBIT
+(
+    id            INT      NOT NULL IDENTITY PRIMARY KEY CLUSTERED,
+    Date          DATETIME NOT NULL,
+    Radio_Name    CHAR(10) NOT NULL FOREIGN KEY REFERENCES Radio.Radio (Name),
+    CBIT_Code     SMALLINT NOT NULL,
+    Configuration TINYINT  NOT NULL FOREIGN KEY REFERENCES Common.CBITResult
+);
+GO
+
+CREATE TABLE Final.FSSoftware
+(
+    id          INT         NOT NULL IDENTITY PRIMARY KEY CLUSTERED,
+    Date        DATETIME    NOT NULL,
+    Radio_Name  CHAR(10)    NOT NULL FOREIGN KEY REFERENCES Radio.Radio (Name),
+    Partition   TINYINT     NOT NULL,
+    Part_Number VARCHAR(12) NOT NULL,
+    Version     VARCHAR(5)  NOT NULL,
+    Status      TINYINT     NOT NULL FOREIGN KEY REFERENCES Common.Partition (id),
+);
+

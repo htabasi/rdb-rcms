@@ -907,23 +907,27 @@ ON Radio.Radio
 AFTER INSERT
 AS
     BEGIN
-        INSERT INTO Final.FEAdjustment (Radio_Name) VALUES inserted.Name;
-        INSERT INTO Final.FEConnection (Radio_Name) VALUES inserted.Name;
-        INSERT INTO Final.FENetwork (Radio_Name) VALUES inserted.Name;
-        INSERT INTO Final.FEOperation (Radio_Name) VALUES inserted.Name;
-        INSERT INTO Final.FEStatus (Radio_Name) VALUES inserted.Name;
-        INSERT INTO Final.FSConfiguration (Radio_Name) VALUES inserted.Name;
-        INSERT INTO Final.FSInstallation (Radio_Name) VALUES inserted.Name;
-        INSERT INTO Final.FSNetwork (Radio_Name) VALUES inserted.Name;
-        INSERT INTO Final.FSSNMP (Radio_Name) VALUES inserted.Name;
-        INSERT INTO Final.FSStatus (Radio_Name) VALUES inserted.Name;
+        DECLARE @RN CHAR(10);
+        DECLARE @RT TINYINT;
+        SELECT @RN=Name, @RT=RadioType From inserted;
 
-        IF inserted.RadioType=1 BEGIN
-            INSERT INTO Final.FETXOperation (Radio_Name) VALUES inserted.Name;
-            INSERT INTO Final.FESpecialSetting (Radio_Name) VALUES inserted.Name;
-            INSERT INTO Final.FSTXConfiguration (Radio_Name) VALUES inserted.Name;
+        INSERT INTO Final.FEAdjustment (Radio_Name) VALUES (@RN);
+        INSERT INTO Final.FEConnection (Radio_Name) VALUES (@RN);
+        INSERT INTO Final.FENetwork (Radio_Name) VALUES (@RN);
+        INSERT INTO Final.FEOperation (Radio_Name) VALUES (@RN);
+        INSERT INTO Final.FEStatus (Radio_Name) VALUES (@RN);
+        INSERT INTO Final.FSConfiguration (Radio_Name) VALUES (@RN);
+        INSERT INTO Final.FSInstallation (Radio_Name) VALUES (@RN);
+        INSERT INTO Final.FSNetwork (Radio_Name) VALUES (@RN);
+        INSERT INTO Final.FSSNMP (Radio_Name) VALUES (@RN);
+        INSERT INTO Final.FSStatus (Radio_Name) VALUES (@RN);
+
+        IF @RT=1 BEGIN
+            INSERT INTO Final.FETXOperation (Radio_Name) VALUES (@RN);
+            INSERT INTO Final.FESpecialSetting (Radio_Name) VALUES (@RN);
+            INSERT INTO Final.FSTXConfiguration (Radio_Name) VALUES (@RN);
         END ELSE BEGIN
-            INSERT INTO Final.FERXOperation (Radio_Name) VALUES inserted.Name;
-            INSERT INTO Final.FSRXConfiguration (Radio_Name) VALUES inserted.Name;
+            INSERT INTO Final.FERXOperation (Radio_Name) VALUES (@RN);
+            INSERT INTO Final.FSRXConfiguration (Radio_Name) VALUES (@RN);
         END
     END;

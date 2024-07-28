@@ -40,7 +40,12 @@ class Commander(Thread):
         self.request = {'G': 'Get', 'S': 'Set', 'T': 'Trap'}
         self.code_name = {'Send': 'send_command', 'G': 'get_command', 'S': 'set_command', 'T': 'trap_command'}
         self.task = {'Send': 'Send command', 'G': 'Get command', 'S': 'Set command', 'T': 'Trap command'}
-        self.time_period_commands = {'FFSQ': (0, 1), 'RCPF': (1, 0), 'RCPT': (1, 0)}
+        # self.time_period_commands = {'FFSQ': (0, 1), 'RCPF': (1, 0), 'RCPT': (1, 0)}
+        self.time_period_commands = {
+            'FFSQ': {'start': 0, 'end': 1, 'start_action': 8, 'end_action': 9},
+            'RCPF': {'start': 1, 'end': 0, 'start_action': 3, 'end_action': 4},
+            'RCPT': {'start': 1, 'end': 0, 'start_action': 5, 'end_action': 6},
+        }
 
     def set_counters(self, aggregate, resettable):
         self.cmd_executed.set(aggregate, resettable)
@@ -96,20 +101,23 @@ class Commander(Thread):
         self.cmd_executed.add()
 
     def run_time_period_command(self, _id, key, request, value, uid):
-        start, end = self.time_period_commands[key]
+        start, start_action = self.time_period_commands[key]['start'], self.time_period_commands[key]['start_action']
+        end, end_action = self.time_period_commands[key]['end'], self.time_period_commands[key]['end_action']
         running_length = int(value)
 
         send_moment = time()
-        if not self.run_command(_id, key, request, start, uid, requested=3, done=6, failed=5, length=running_length):
+        if not self.run_command(_id, key, request, start, uid, requested=3, done=6, failed=5,
+                                length=running_length, action=start_action):
             return
 
         wait_time = running_length - time() + send_moment
         if wait_time > 0:
             sleep(wait_time)
 
-        self.run_command(_id, key, request, end, uid, requested=7, done=4, failed=5, length=running_length)
+        self.run_command(_id, key, request, end, uid, requested=7, done=4, failed=5,
+                         length=running_length, action=end_action)
 
-    def run_command(self, _id, key, request, value, uid, requested=3, done=4, failed=5, length=0):
+    def run_command(self, _id, key, request, value, uid, requested=3, done=4, failed=5, length=0, action=None):
         """
         action
             0: Event List Cleared
@@ -120,12 +128,14 @@ class Commander(Thread):
             5: TX + Mod Pressed
             6: TX + Mod Released
             7: Radio Restarted
+            8: SQ Circuit OFF
+            9: SQ Circuit ON
         """
-        if request == 'S' and key in {'EVCL', 'GRAT', 'MSGO', 'RCPF', 'RCPT', 'RCRR'}:
-            action = {'EVCL': 0, 'GRAT': 1, 'MSGO': 2, 'RCPF': 4 - value, 'RCPT': 6 - value, 'RCRR': 7}.get(key)
-            comment = f'{length} Second(s)' if key in {'RCPF', 'RCPT'} else ''
-        else:
-            action, comment = None, None
+        comment = f'{length} Second(s)' if key in {'FFSQ', 'RCPF', 'RCPT'} else ''
+        # if request == 'S' and key in {'EVCL', 'GRAT', 'MSGO', 'RCPF', 'RCPT', 'RCRR'}:
+        #     comment = f'{length} Second(s)' if key in {'FFSQ', 'RCPF', 'RCPT'} else ''
+        # else:
+        #     comment = None
 
         self.log.debug(f'Command Received: {self.request[request]} {key} {value}')
 
@@ -143,12 +153,12 @@ class Commander(Thread):
             return False
 
     def command_succeed(self, com_num):
-        answer, result = self.user_command_succeed(com_num)
-        while answer != 'Answered':
+        answered, is_ok = self.user_command_succeed(com_num)
+        while not answered:
             sleep(0.2)
-            answer, result = self.user_command_succeed(com_num)
+            answered, is_ok = self.user_command_succeed(com_num)
 
-        return result
+        return is_ok
 
     def is_permitted(self, user_id, key, request, value, code, _id):
         code_name = self.code_name.get(code)

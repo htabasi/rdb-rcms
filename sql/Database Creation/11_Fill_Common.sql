@@ -174,7 +174,9 @@ VALUES (0, 'Event List Cleared'),
        (4, 'TX Released'),
        (5, 'TX + Mod Pressed'),
        (6, 'TX + Mod Released'),
-       (7, 'Radio Restarted');
+       (7, 'Radio Restarted'),
+       (8, 'SQ Circuit OFF'),
+       (9, 'SQ Circuit ON');
 GO
 
 Insert Into Common.SQLogic

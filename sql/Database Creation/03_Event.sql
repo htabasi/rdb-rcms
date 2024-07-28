@@ -88,13 +88,13 @@ GO
 
 CREATE TABLE Event.Session
 (
-    id         INT         NOT NULL IDENTITY PRIMARY KEY CLUSTERED,
-    Date       DATETIME    NOT NULL DEFAULT GETDATE(),
-    Radio_Name CHAR(10)    NOT NULL FOREIGN KEY REFERENCES Radio.Radio (Name),
-    IP         VARCHAR(15) NOT NULL,
-    Client     TINYINT     NOT NULL FOREIGN KEY REFERENCES Common.Controller (id),
-    Type       TINYINT     NOT NULL FOREIGN KEY REFERENCES Common.SessionType (id),
-    SessionNumber TINYINT NOT NULL
+    id            INT         NOT NULL IDENTITY PRIMARY KEY CLUSTERED,
+    Date          DATETIME    NOT NULL DEFAULT GETDATE(),
+    Radio_Name    CHAR(10)    NOT NULL FOREIGN KEY REFERENCES Radio.Radio (Name),
+    IP            VARCHAR(15) NOT NULL,
+    Client        TINYINT     NOT NULL FOREIGN KEY REFERENCES Common.Controller (id),
+    Type          TINYINT     NOT NULL FOREIGN KEY REFERENCES Common.SessionType (id),
+    SessionNumber TINYINT     NOT NULL DEFAULT 1
 );
 GO
 

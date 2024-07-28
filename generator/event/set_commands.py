@@ -20,7 +20,7 @@ class ESetCommandInserter(InserterGenerator):
     """
 
     def __init__(self, radio, log):
-        acceptable_keys = ['EVCL', 'GRAT', 'MSGO', 'RCPF', 'RCPT', 'RCRR']
+        acceptable_keys = ['EVCL', 'UserFFSQ', 'GRAT', 'MSGO', 'RCPF', 'RCPT', 'RCRR']
         path = os.path.join(SQL_INSERT_EVENT, 'set_command.sql')
         super(ESetCommandInserter, self).__init__(radio, log=log, insert_query_file=path,
                                                   acceptable_keys=acceptable_keys)
@@ -33,10 +33,14 @@ class ESetCommandInserter(InserterGenerator):
         RCPT: 5,TX + Mod Pressed
         RCPT: 6,TX + Mod Released
         RCRR: 7,Radio Restarted
+        FFSQ: 8,SQ Circuit OFF
+        FFSQ: 9,SQ Circuit ON
         '''
 
     def generate(self, time_tag, key, value) -> list:
         # Date, Radio_Name, CKey, UserID, Action, Comment
+        key = key if key != 'UserFFSQ' else 'FFSQ'
+        self.log.warning(f"{self.__class__.__name__}: {key}, {value}")
         uid, action, comment = value
         return [self.insert.format(str(time_tag)[:23], self.radio.name, key, uid, action, comment)]
     #

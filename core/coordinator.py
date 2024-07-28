@@ -17,11 +17,10 @@ class Coordinator:
         self.log.debug(f"send: Register command {com_num}: {key} {request} {value}")
         if user_command:
             user_id, action, comment = uac
-            self.user_command[com_num] = {'request': request, 'key': key, 'answer': None, 'error': False,
+            self.user_command[com_num] = {'request': request, 'key': key, 'answer': False, 'result_ok': False,
                                           'user': user_id, 'action': action, 'comment': comment}
             self.log.debug(f"send: Register User command {com_num}: {key} {request} {value} {user_id}")
-
-        return com_num
+        # return com_num
 
     def receive(self, time_tag, com_num, sign='d', error_code=0, answer='', message=''):
         """
@@ -48,10 +47,19 @@ class Coordinator:
             self.log.debug(f"receive: Update {com['key']} -> {answer}")
             self.parent.event_on_parameter_updated(time_tag, com['key'], answer)
         elif sign == 's':
-            if com['key'] in {'EVCL', 'GRAT', 'MSGO', 'RCPF', 'RCPT', 'RCRR'}:
-                self.parent.event_on_parameter_updated(time_tag, com['key'],
-                                                       (com['user'], com['action'], com['comment']))
+            self.log.debug(f"receive: Set Answer {com['key']} -> {com}")
+            if com['key'] in {'EVCL', 'GRAT', 'MSGO', 'RCPF', 'RCPT', 'RCRR', 'FFSQ'}:
+                ucm = self.user_command[com_num]
+                self.log.debug(f"receive: Set Answer POS1 {com['key']} -> {com}")
+                if com['key'] == 'FFSQ':
+                    self.parent.event_on_parameter_updated(time_tag, 'UserFFSQ',
+                                                           (ucm['user'], ucm['action'], ucm['comment']))
+                else:
+                    self.parent.event_on_parameter_updated(time_tag, com['key'],
+                                                           (ucm['user'], ucm['action'], ucm['comment']))
+
             else:
+                self.log.debug(f"receive: Set Answer POS2 {com['key']} -> {com}")
                 self.parent.event_on_parameter_updated(time_tag, com['key'], com['value'])
             self.parent.event_on_set_accepted(time_tag, com['key'], com['value'])
         elif sign == 't':
@@ -65,13 +73,20 @@ class Coordinator:
         if com_num in self.user_command:
             com = self.user_command[com_num]
             if sign in {'g', 's', 't'}:
+                self.user_command[com_num]['answer'] = True
+                self.user_command[com_num]['result_ok'] = True
                 self.parent.event_on_user_command_answered(time_tag, com['key'], answer)
             else:
+                self.user_command[com_num]['answer'] = True
+                self.user_command[com_num]['result_ok'] = False
                 self.parent.event_on_user_command_answered(time_tag, com['key'], None, error=True)
 
     def user_command_succeed(self, com_num):
-        if self.user_command[com_num]['answer'] is not None:
+        self.log.debug(f"Checking Command {com_num} Result: {self.user_command[com_num]}")
+        if self.user_command[com_num]['answer']:
             com = self.user_command.pop(com_num)
-            return 'Answered', com['error']
+            self.log.debug(f"Checking Command {com_num} Result: answered = {com['answer']} result_ok = {com['result_ok']}")
+            return com['answer'], com['result_ok']
         else:
-            return 'Not Answered', None
+            self.log.debug(f"Checking Command {com_num} Result: Not answered yet")
+            return self.user_command[com_num]['answer'], self.user_command[com_num]['result_ok']

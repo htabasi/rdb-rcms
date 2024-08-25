@@ -100,7 +100,7 @@ class BaseReception(Thread):
                     self.eval_answer(time_tag, received)
                 except Exception as e:
                     self.err_eval.add()
-                    self.log.error(f'Evaluation: Error {e.__class__.__name__} {e.args}')
+                    self.log.error(f'Evaluation: Error {e.__class__.__name__} {e.args} Received:{received}')
 
     def eval_answer(self, time_tag, received):
         try:

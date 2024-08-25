@@ -24,6 +24,10 @@ while True:
         print('Closing .........................')
         _radio.close()
         break
+    elif items.upper() == 'IP':
+        ip, port = _radio.socket.getsockname()
+        print(ip, type(ip))
+        print(port, type(port))
     try:
         items = items.upper().split()
         if len(items) == 2:

@@ -29,6 +29,7 @@ class OptimumGenerator:
         self.counter_update = get_file(os.path.join(SQL_OPTIMUM, 'counter.sql'))
         self.timer_update = get_file(os.path.join(SQL_OPTIMUM, 'timer.sql'))
         self.connection = get_file(os.path.join(SQL_OPTIMUM, 'connection.sql'))
+        self.connection_stat = get_file(os.path.join(SQL_OPTIMUM, 'connection_stat.sql'))
         self.disconnection_updated = False
 
     def update_module_stat(self, *args):
@@ -55,4 +56,5 @@ class OptimumGenerator:
     def update_disconnection(self, time_tag):
         if not self.disconnection_updated:
             self.executor.add(self.connection.format(str(time_tag)[:23], self.name))
+            self.executor.add(self.connection_stat.format(self.name))
             self.disconnection_updated = True

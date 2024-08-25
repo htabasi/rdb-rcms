@@ -60,6 +60,8 @@ class Status:
         self.status['GeneratorAlive'] = int(self.radio.generator.status())
         self.status['ExecutorAlive'] = int(self.radio.executor.status())
         self.status['CommanderAlive'] = int(self.radio.commander.status())
+        self.status['AnalyzerAlive'] = int(self.radio.analyzer.status())
+        self.status['HealthAlive'] = int(self.radio.health.status())
         self.status['RadioConnected'] = int(self.radio.is_connect)
         self.status['DatabaseConnected'] = int(self.radio.executor.connection.connected)
         self.status['UpdateSettingsScheduled'] = int(self.radio.setting_planner.is_scheduled)
@@ -75,18 +77,9 @@ class Status:
     def update_status_when_disconnect(self):
         self.log.debug(f'On Disconnect Status Update')
         self.status['ModuleAlive'] = int(self.radio.status())
-        # self.status['ReceptionAlive'] = self.radio.reception.status()
-        # self.status['KeeperAlive'] = self.radio.keeper.status()
-        # self.status['GeneratorAlive'] = self.radio.generator.status()
         self.status['ExecutorAlive'] = int(self.radio.executor.status())
-        # self.status['CommanderAlive'] = self.radio.commander.status()
+        self.status['HealthAlive'] = int(self.radio.health.status())
         self.status['RadioConnected'] = int(self.radio.is_connect)
         self.status['DatabaseConnected'] = int(self.radio.executor.connection.connected)
-        # self.status['UpdateSettingsScheduled'] = self.radio.setting_planner.is_scheduled
-        # self.status['UpdateSpecialScheduled'] = self.radio.special_planner.is_scheduled
-        # self.status['UpdateTimerScheduled'] = self.radio.timer_planner.is_scheduled
-        # self.status['UpdateSettingsExecuting'] = self.radio.setting_planner.executing
-        # self.status['UpdateSpecialExecuting'] = self.radio.special_planner.executing
-        # self.status['UpdateTimerExecuting'] = self.radio.timer_planner.executing
         self.radio.optimum_generator.update_module_stat(datetime.utcnow(), self.status)
         self.radio.optimum_generator.update_counter_timer()

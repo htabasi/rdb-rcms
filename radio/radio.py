@@ -10,6 +10,7 @@ from core.identity import RadioIdentity
 from execute import get_connection, get_simple_row
 from execute.executor import QueryExecutor
 from generator.generator import QueryGenerator
+from health.health import HealthMonitor
 from radio.comander import Commander
 from radio.optimum import OptimumGenerator
 from radio.planner import SettingsUpdatePlanner, SpecialSettingUpdatePlanner, TimerUpdatePlanner
@@ -25,6 +26,7 @@ class Radio(Core):
     executor: QueryExecutor  # Thread Object
     commander: Commander  # Thread Object
     analyzer: Analyzer  # Thread Object
+    health: HealthMonitor  # Thread Object
     setting_planner: SettingsUpdatePlanner  # Include Timer Object
     special_planner: SpecialSettingUpdatePlanner  # Include Timer Object
     timer_planner: TimerUpdatePlanner  # Include Timer Object
@@ -93,6 +95,7 @@ class Radio(Core):
     def event_on_connect(self, time_tag):
         super().event_on_connect(time_tag)
         self.generator = QueryGenerator(self, self.executor, self.logs['Generator'])
+        self.health = HealthMonitor(self, self.executor, self.logs['HealthMonitor'])
         self.commander = Commander(self, self.logs['Commander'])
         self.setting_planner = SettingsUpdatePlanner(self, self.logs['SettingsUpdate'],
                                                      self.preparer.application['PeriodicSettingCheck'],
@@ -104,6 +107,7 @@ class Radio(Core):
         self.analyzer = Analyzer(self, self.executor, self.logs['Analyzer'])
 
         self.generator.calm = float(self.preparer.application['GeneratorCalm'])
+        self.health.calm = float(self.preparer.application['HealthCalm'])
         self.commander.calm = float(self.preparer.application['CommanderCalm'])
         self.analyzer.calm = float(self.preparer.application['AnalyzeCalm'])
 
@@ -129,9 +133,12 @@ class Radio(Core):
             self.generator.event_special.save_setting(self.preparer.special)
             self.special_planner.set_counters(self.preparer.counter[0], self.preparer.counter[1])
 
+        self.health.create_parameters(*self.preparer.health_parameters)
+
         self.generator.start()
         self.commander.start()
         self.analyzer.start()
+        self.health.start()
         self.event_on_parameter_updated(time_tag, 'Connection', 1)
         self.optimum_generator.disconnection_updated = False
 
@@ -183,6 +190,7 @@ class Radio(Core):
         elif key in {'RCRI', 'RCTC'}:
             self.update_indicator(time_tag, int(value))
 
+        self.health.add(key, value)
         if key == 'RCOC':
             self.operating_hour.add(int(value))
         else:

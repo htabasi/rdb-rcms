@@ -2,7 +2,8 @@ import os
 
 from execute import get_simple_row, get_multiple_row, get_simple_column, execute_no_answer_query
 from generator import get_file
-from settings import SQL_PREPARE, SQL_PREPARE_APPLICATION, SQL_PREPARE_EVENT, SQL_PREPARE_SETTING, SQL_PREPARE_ANALYZE
+from settings import SQL_PREPARE, SQL_PREPARE_APPLICATION, SQL_PREPARE_EVENT, SQL_PREPARE_SETTING, SQL_PREPARE_ANALYZE, \
+    SQL_PREPARE_HEALTH
 
 
 class RadioPreparer:
@@ -35,6 +36,13 @@ class RadioPreparer:
         self.software = self.multiple_row(SQL_PREPARE_SETTING, 'software.sql', (self.name,))
         self.status = self.simple_row(SQL_PREPARE_SETTING, 'status.sql', (self.name,), as_dict=True)
 
+        self.health_parameters = (
+            self.multiple_row(SQL_PREPARE_HEALTH, 'fixed_value.sql', (self.name,), as_dict = True),
+            self.multiple_row(SQL_PREPARE_HEALTH, 'multi_level.sql', (self.name,), as_dict=True),
+            self.multiple_row(SQL_PREPARE_HEALTH, 'range.sql', (self.name,), as_dict=True),
+            self.multiple_row(SQL_PREPARE_HEALTH, 'equal_string.sql', (self.name,), as_dict=True),
+            self.multiple_row(SQL_PREPARE_HEALTH, 'pattern_string.sql', (self.name,), as_dict=True)
+        )
         self.cbit_list = self.simple_column(SQL_PREPARE, 'cbit_list.sql', ())
         parent.initial_commands = self.multiple_row(SQL_PREPARE, 'initial.sql', (self.code,))
         if parent.radio.type == 'RX':

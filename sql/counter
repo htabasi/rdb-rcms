@@ -1,0 +1,36 @@
+
+CounterName                 MinValue        MaxValue        AvgValue
+----------------------------------------------------------------------
+CntCBITError	                0	            22	            0
+CntReceivedCommandError	        0	            0           	0
+CntReceivedAccessError	        0	            1	            0
+CntCommandExecuted	            0	            25	            0
+CntCommandRejected	            0	            0	            0
+CntErrorPacketReceive	        0	            0	            0
+CntErrorQueryExecution	        0	            2	            0
+CntErrorUpdateSettings	        0	            0	            0
+CntErrorUpdateSpecial	        0	            0	            0
+CntErrorUpdateTimer	            0	            0	            0
+CntErrorQueryGeneration	        0	            9	            1
+CntCBITWarning	                0	            133	            8
+CntUpdateSettings	            1	            23	            15
+CntConnect	                    1	            354	            25
+CntErrorPacketSending	        0	            319	            32
+CntReceivedTrapAcknowledge	    26	            432	            387
+CntUpdateSpecial	            0	            2874	        916
+CntErrorConnection	            0	            58607	        4810
+CntDisconnect	                0	            58674	        4854
+CntUpdateTimer	                3044	        127807	        7472
+CntReceivedGetAnswer	        100	            22063	        8598
+CntIndicatorOn	                0	            62154	        14641
+CntErrorPacketEvaluation	    0	            1344433	        24913
+CntKeepConnectionPacket	        607	            65751	        28609
+CntReceivedSetAcknowledge	    603	            65766	        28622
+CntSentPacket	                4814	        115090	        53821
+CntReceivedPacket	            11443	        5651856	        1284374
+CntReceivedTrapAnswer	        7686	        5895238	        1326064
+CntQueryGenerated	            11227	        5955417	        1341078
+CntReceivedMessage	            12370	        5943167	        1363673
+CntQueryExecuted	            219371	        10683278	    2039549
+
+

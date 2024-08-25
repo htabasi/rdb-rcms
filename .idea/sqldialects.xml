@@ -2,6 +2,8 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/../../Desktop/Timer.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/sql/Database Creation/100_HealthMonitor.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/sql/Database Creation/101_Fill_HealthMonitor.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/sql/Database Creation/42_Final_Table_Creation.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/sql/Database Creation/43_Final_Fill.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/sql/Database Creation/44_Final_Create_Triggers.sql" dialect="TSQL" />

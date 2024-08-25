@@ -120,6 +120,7 @@ class CounterUpdater(Updater):
             self.root.commander.cmd_rejected,
             self.root.setting_planner.pln_counter,
             self.root.timer_planner.pln_counter,
+            self.root.health.stat_update,
             self.root.reception.err_receive,
             self.root.reception.err_eval,
             self.root.err_send,
@@ -128,7 +129,8 @@ class CounterUpdater(Updater):
             self.root.executor.err_execute,
             self.root.commander.err_command,
             self.root.setting_planner.err_counter,
-            self.root.timer_planner.err_counter
+            self.root.timer_planner.err_counter,
+            self.root.health.err_update
         ]
         if self.radio.type == 'TX':
             self.gauges.extend([self.root.special_planner.pln_counter, self.root.special_planner.err_counter])

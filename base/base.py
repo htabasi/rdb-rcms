@@ -125,6 +125,7 @@ class Base(Thread):
         if hasattr(self, 'reception'):
             self.reception.event_on_disconnect()
         self.socket.close()
+        self.log.info('Socket closed.')
         self.disconnect_counter.add()
 
     def update_timers(self, connect: bool):

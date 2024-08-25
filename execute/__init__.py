@@ -8,8 +8,8 @@ from settings import SQL_SELECT
 
 def get_connection(log=None, server=None):
     if server is None:
-        # server = 'ProBook\\Pro'
-        server = '192.168.1.201'
+        server = 'ProBook\\Pro'
+        # server = '192.168.1.201'
     database = 'RCMS'
     username = 'rdbu'
     password = 'HadiTabasiAslAvval'
@@ -134,10 +134,22 @@ def execute_no_answer_query(connection, query, log=None):
 
 if __name__ == '__main__':
     co = get_connection()
-    a = get_scalar_answer(co, 'select GRTI from Setting.Status')
+    a = get_multiple_row(co, """
+    SELECT
+        PT.Type,
+        HMP.ParameterName,
+        HPS.ParameterValue,
+        ST.id,
+        ST.StatusName,
+        HPS.Message
+    From HealthMonitor.ParameterStatuses HPS
+    INNER JOIN HealthMonitor.Parameters HMP on HMP.id = HPS.ParameterID
+    INNER JOIN HealthMonitor.ParameterTypes PT on PT.id = HMP.ParameterType
+    INNER JOIN HealthMonitor.StatusTypes ST on ST.id = HPS.StatusTypeID""")
+    # a = get_scalar_answer(co, 'select GRTI from Setting.Status')
     print(a)
     print(type(a))
-    s = "2024/06/12 16:33:33"
-    from datetime import datetime
-    d = datetime.strptime(s.replace('"', ''), '%Y/%m/%d %H:%M:%S')
-    print(d == a)
+    # s = "2024/06/12 16:33:33"
+    # from datetime import datetime
+    # d = datetime.strptime(s.replace('"', ''), '%Y/%m/%d %H:%M:%S')
+    # print(d == a)

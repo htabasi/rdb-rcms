@@ -1,0 +1,1 @@
+DELETE HealthMonitor.RadioStatus WHERE Radio_Name='{}';

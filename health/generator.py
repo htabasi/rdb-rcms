@@ -5,14 +5,18 @@ class StatGenerator:
     def __init__(self, health):
         self.health = health
         self.key_list = {
-            'GRDS': self.access,
-            'SCSL': self.session,
             'GRCS': self.cbit_level,
+            'GRDS': self.access,
+            'GRII': self.second_ip_address,
+            'GRIP': self.first_ip_address,
+            'GRLO': self.display_name,
+            'GRND': self.serial_number,
+            'GRSV': self.software,
+            'GRTI': self.time_date,
             'RCMV': self.voltage,
             'RCTP': self.temperature,
-            'GRTI': self.time_date,
-            'GRSV': self.software,
-            'GRLO': self.display_name
+            'SCSL': self.session,
+
         }
         self.mip = self.health.radio.socket.getsockname()[0]
         TX = self.health.radio.radio.type == 'TX'
@@ -22,7 +26,7 @@ class StatGenerator:
         self.pst = 'TXPowerSupplyTemperatures' if TX else 'RXPowerSupplyTemperatures'
         self.rmt = 'TXRadioModuleTemperatures' if TX else 'RXRadioModuleTemperatures'
 
-    def get_stat(self, key, value):
+    def get_stat(self, key, value: str):
         return self.key_list[key](value)
 
     def access(self, value: str):
@@ -40,7 +44,7 @@ class StatGenerator:
         else:
             self.health.log.warning(f'My Session Not Found: ips={ips}')
             my_session_type = 0
-        other_session_type = max(ips.values())
+        other_session_type = max(ips.values()) if ips.keys() else 0
 
         return [self.health.parameters['Session'].update(sessions),
                 self.health.parameters['MySessionType'].update(my_session_type),
@@ -78,3 +82,22 @@ class StatGenerator:
     def display_name(self, value: str):
         dsn = value.replace('"', '').split(',')[2]
         return [self.health.parameters['DisplayedName'].update(dsn)]
+
+    def first_ip_address(self, value: str):
+        return self.ip_address(value, 'IPAddress', 'Subnet', 'Gateway')
+
+    def second_ip_address(self, value: str):
+        return self.ip_address(value, 'SecondIPAddress', 'SecondSubnet', 'SecondGateway')
+
+    def ip_address(self, ips: str, ip_p, subnet_p, gateway_p):
+        ip, subnet, gateway = ips.replace('"', '').replace('::', '').split(',')[1:]
+        return [self.health.parameters[ip_p].update(ip),
+                self.health.parameters[subnet_p].update(subnet),
+                self.health.parameters[gateway_p].update(gateway)]
+
+    def serial_number(self, value: str):
+        nd = value.replace('"', '').split(',')
+        if int(nd[0]) == 0:
+            return [self.health.parameters['SerialNumber'].update(nd[8])]
+        else:
+            return []

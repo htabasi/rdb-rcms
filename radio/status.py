@@ -78,7 +78,7 @@ class Status:
         self.log.debug(f'On Disconnect Status Update')
         self.status['ModuleAlive'] = int(self.radio.status())
         self.status['ExecutorAlive'] = int(self.radio.executor.status())
-        self.status['HealthAlive'] = int(self.radio.health.status())
+        # self.status['HealthAlive'] = int(self.radio.health.status())
         self.status['RadioConnected'] = int(self.radio.is_connect)
         self.status['DatabaseConnected'] = int(self.radio.executor.connection.connected)
         self.radio.optimum_generator.update_module_stat(datetime.utcnow(), self.status)

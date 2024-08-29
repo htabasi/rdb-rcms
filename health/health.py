@@ -52,15 +52,12 @@ class HealthMonitor(Thread):
             'GRDH': 'DHCPEnabled',
             'GRHN': 'Hostname',
             'GRIE': 'SecondIPAddressEnabled',
-            'GRII': 'SecondIPAddress',
             'GRIN': 'InstallationInfo',
-            'GRIP': 'IPAddress',
             'GRIS': 'RxInputSensitivity',
             'GRIV': 'IPv6Enabled',
             'GRLR': 'MeasureRXAudioLevel',
             'GRLT': 'MeasureTXAudioLevel',
             'GRNA': 'NTPSyncActive',
-            'GRND': 'SerialNumber',
             'GRNS': 'NTPServer',
             'GRSE': 'SNMPEnable',
             'GRSN': 'SNMPCommunityString',
@@ -188,15 +185,17 @@ class HealthMonitor(Thread):
                                                      'message': data['message']}]}
 
         for data in fixed_values:
-            self.parameters[data['code']] = FixedValue(health=self, **data)
+            self.parameters[data['code']] = FixedValue(health=self, log=self.log, **data)
         for data in equal_strings:
-            self.parameters[data['code']] = EqualString(health=self, **data)
+            self.parameters[data['code']] = EqualString(health=self, log=self.log, **data)
         for data in pattern_strings:
-            self.parameters[data['code']] = PatternString(health=self, **data)
+            self.parameters[data['code']] = PatternString(health=self, log=self.log, **data)
         for code, data in ml_codes.items():
-            self.parameters[code] = MultiLevel(health=self, **data)
+            self.parameters[code] = MultiLevel(health=self, log=self.log, **data)
         for code, data in rn_codes.items():
-            self.parameters[code] = Range(health=self, **data)
+            self.parameters[code] = Range(health=self, log=self.log, **data)
+
+        self.log.debug(f'Parameters: {list(self.parameters.keys())}')
 
     def status(self):
         stat = self.alive_counter != self.alive_counter_prev

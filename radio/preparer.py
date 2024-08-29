@@ -36,6 +36,8 @@ class RadioPreparer:
         self.software = self.multiple_row(SQL_PREPARE_SETTING, 'software.sql', (self.name,))
         self.status = self.simple_row(SQL_PREPARE_SETTING, 'status.sql', (self.name,), as_dict=True)
 
+        query = get_file(os.path.join(SQL_PREPARE_HEALTH, 'clear_radio_status.sql')).format(self.name)
+        execute_no_answer_query(self.connection, query, self.log)
         self.health_parameters = (
             self.multiple_row(SQL_PREPARE_HEALTH, 'fixed_value.sql', (self.name,), as_dict = True),
             self.multiple_row(SQL_PREPARE_HEALTH, 'multi_level.sql', (self.name,), as_dict=True),

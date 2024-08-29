@@ -11,7 +11,7 @@ Values (0, 19, 10, 30, 1, 1),
        (1, 19, 10, 50, 1, 1);
 
 ALTER TABLE Application.Configuration
-    ADD HealthCalm DECIMAL(4, 2) DEFAULT 1;
+    ADD HealthCalm DECIMAL(4, 2) NOT NULL DEFAULT 1;
 
 ALTER TABLE Analyze.Counter
     ADD CntStatusUpdated BIGINT NOT NULL DEFAULT 0;
@@ -289,110 +289,80 @@ VALUES ('CBIT Warning Detected');
 INSERT INTO HealthMonitor.Messages (message)
 VALUES ('CBIT Error Detected');
 GO
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Audio Delay above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Audio Delay High ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Pre-Emphasis above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Pre-Emphasis High ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Local Mode Timeout above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('SNR Squelch Threshold below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('SNR Squelch Threshold above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('RSSI Squelch Threshold below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('RSSI Squelch Threshold above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Audio Level ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('PTT Timeout below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('PTT Timeout above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Tx Low Power Level below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Tx Low Power Level above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Modulation Depth Setting Low ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Modulation Depth Setting below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Modulation Depth Value Low ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Modulation Depth Value below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Modulation Depth Value above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('DC Section Voltage Low ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('DC Section Voltage below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('DC Section Voltage above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('DC Section Voltage High ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Battery Voltage Low ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Battery Voltage below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Battery Voltage above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Battery Voltage High ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Power Value Low ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Power Value Below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Power Value above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Radio Module Temperatures Low ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Radio Module Temperatures below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Radio Module Temperatures above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Radio Module Temperatures High ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Power Supply Temperatures Low ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Power Supply Temperatures below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Power Supply Temperatures above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Power Supply Temperatures High ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Power Amplifier Temperatures Low ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Power Amplifier Temperatures below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Power Amplifier Temperatures above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Power Amplifier Temperatures High ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('VSWR Value above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('VSWR Value High ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('External VSWR Voltage Low ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('EXT VSWR limit below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('EXT VSWR limit above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Audio Level Low ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Audio Level below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Audio Level above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Time and Date difference is above Normal ({:.3f}) seconds');
-INSERT INTO HealthMonitor.Messages (message)
-VALUES ('Time and Date is not Sync');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('Audio Delay above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('Audio Delay High ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('Audio Level Low ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('Audio Level below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('Audio Level above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('Local Mode Timeout above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('Time and Date difference is above Normal ({:.3f}) seconds');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('Time and Date is not Sync');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('Audio Level ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RSSI Squelch Threshold below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RSSI Squelch Threshold above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Battery Voltage Low ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Battery Voltage below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Battery Voltage above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Battery Voltage High ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RX DC Section Voltage Low ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RX DC Section Voltage below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RX DC Section Voltage above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RX DC Section Voltage High ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Power Amplifier Temperatures Low ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Power Amplifier Temperatures below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Power Amplifier Temperatures above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Power Amplifier Temperatures High ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Power Supply Temperatures Low ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Power Supply Temperatures below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Power Supply Temperatures above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Power Supply Temperatures High ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Radio Module Temperatures Low ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Radio Module Temperatures below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Radio Module Temperatures above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Radio Module Temperatures High ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('SNR Squelch Threshold below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('SNR Squelch Threshold above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('External VSWR Voltage Low ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('EXT VSWR limit below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('EXT VSWR limit above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('Audio Level ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('Modulation Depth Setting Low ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('Modulation Depth Setting below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('Modulation Depth Value Low ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('Modulation Depth Value below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('Modulation Depth Value above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('PTT Timeout below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('PTT Timeout above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Battery Voltage Low ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Battery Voltage below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Battery Voltage above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Battery Voltage High ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX DC Section Voltage Low ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX DC Section Voltage below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX DC Section Voltage above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX DC Section Voltage High ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('Tx Low Power Level below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('Tx Low Power Level above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Amplifier Temperatures Low ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Amplifier Temperatures below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Amplifier Temperatures above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Amplifier Temperatures High ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Supply Temperatures Low ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Supply Temperatures below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Supply Temperatures above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Supply Temperatures High ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Value Low ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Value Below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Value above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('Pre-Emphasis above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('Pre-Emphasis High ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Radio Module Temperatures Low ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Radio Module Temperatures below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Radio Module Temperatures above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Radio Module Temperatures High ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('VSWR Value above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message) VALUES ('VSWR Value High ({})');
+
 GO
 INSERT INTO HealthMonitor.Messages (message)
 VALUES ('Error occurred during boot');
@@ -836,7 +806,7 @@ WHERE HMP.ParameterType = 3
   AND HMM.message = 'OK';
 
 INSERT INTO HealthMonitor.Range (ParameterID, Radio_Name, Enable, start, [end], normal_msg)
-SELECT HMP.id, RR.Name, 1, -10, 0, HMM.id
+SELECT HMP.id, RR.Name, 1, -10, 1, HMM.id
 FROM HealthMonitor.Parameters HMP
          CROSS JOIN Radio.Radio RR
          CROSS JOIN HealthMonitor.Messages HMM
@@ -1130,7 +1100,7 @@ Where HMP.ParameterCode = 'AudioLevel'
   AND HMM.message = 'Audio Level below Normal ({})';
 
 INSERT INTO HealthMonitor.RangeStats (RangeID, range_start, range_end, severity, message)
-SELECT HMR.id, 0, 10, 1, HMM.id
+SELECT HMR.id, 1, 10, 1, HMM.id
 FROM HealthMonitor.Range HMR
          JOIN HealthMonitor.Parameters HMP on HMP.id = HMR.ParameterID
          CROSS JOIN HealthMonitor.Messages HMM

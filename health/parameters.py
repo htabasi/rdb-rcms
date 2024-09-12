@@ -23,8 +23,12 @@ class FixedValue(Parameter):
         self.message = kwargs['message']
 
     def update(self, value):
-        self.log.debug(f'{self.__class__.__name__} update by value: {value} type: {type(value)}, code: {self.code}, correct: {self.correct}, severity: {self.severity}')
-        severity, message = {True: (0, self.ok), False: (self.severity, self.message)}.get(int(value) == self.correct)
+        self.log.debug(f'{self.__class__.__name__} update by value: {value} type: {type(value)},'
+                       f' code: {self.code}, correct: {self.correct}, severity: {self.severity}')
+        severity, message = {
+            True: (0, self.ok),
+            False: (self.severity, self.message.format(value))
+        }.get(int(value) == self.correct)
         query = {True: '', False: self.health.query(self.id, severity, message)}.get(self.prev == value)
         self.prev = value
         self.log.debug(f'{self.__class__.__name__} result: {severity}, {message}')
@@ -41,7 +45,8 @@ class MultiLevel(Parameter):
         self.log.debug(f'{self.__class__.__name__} stats: {self.stats}')
 
     def update(self, value):
-        self.log.debug(f'{self.__class__.__name__} update by value: {value} type: {type(value)}, code: {self.code}, correct: {self.correct}')
+        self.log.debug(f'{self.__class__.__name__} update by value: {value} type: {type(value)}, '
+                       f'code: {self.code}, correct: {self.correct}')
         value = int(value)
         if self.prev != value:
             self.prev = value
@@ -101,8 +106,12 @@ class EqualString(Parameter):
         self.message = kwargs['message']
 
     def update(self, value):
-        self.log.debug(f'{self.__class__.__name__} update by value: {value} type: {type(value)}, code: {self.code}, correct: {self.correct}, severity: {self.severity}')
-        severity, message = {True: (0, self.ok), False: (self.severity, self.message)}.get(value == self.correct)
+        self.log.debug(f'{self.__class__.__name__} update by value: {value} type: {type(value)}, '
+                       f'code: {self.code}, correct: {self.correct}, severity: {self.severity}')
+        severity, message = {
+            True: (0, self.ok),
+            False: (self.severity, self.message.format(value))
+        }.get(value == self.correct)
         query = {True: '', False: self.health.query(self.id, severity, message)}.get(self.prev == value)
         self.prev = value
         if query:
@@ -120,11 +129,15 @@ class PatternString(Parameter):
         self.message = kwargs['message']
 
     def update(self, value):
-        self.log.debug(f'{self.__class__.__name__} update by value: {value} type: {type(value)}, code: {self.code}, correct: {self.pattern}, severity: {self.severity}')
+        self.log.debug(f'{self.__class__.__name__} update by value: {value} type: {type(value)}, '
+                       f'code: {self.code}, correct: {self.pattern}, severity: {self.severity}')
         value = value.replace('"', '')
         matched = True if re.match(self.pattern, value) else False
         severity = {True: 0, False: self.severity}.get(matched)
-        query = {True: '', False: self.health.query(self.id, severity, self.message)}.get(self.prev == value)
+        query = {
+            True: '',
+            False: self.health.query(self.id, severity, self.message.format(value))
+        }.get(self.prev == value)
         self.prev = value
         if query:
             self.log.debug(f'{self.__class__.__name__} result: {severity}, {self.message}')

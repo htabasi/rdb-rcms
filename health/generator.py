@@ -29,10 +29,16 @@ class StatGenerator:
     def get_stat(self, key, value: str):
         return self.key_list[key](value)
 
+    def get_update(self, parameter, value):
+        if parameter not in self.health.disabled_codes:
+            return self.health.parameters[parameter].update(value)
+        else:
+            return ''
+
+
     def access(self, value: str):
         """GRDS"""
-        acs = int(value[2:].split(',')[-1])
-        return [self.health.parameters['Access'].update(acs)]
+        return [self.get_update('Access', int(value[2:].split(',')[-1]))]
 
     def session(self, value: str):
         """SCSL"""
@@ -46,9 +52,9 @@ class StatGenerator:
             my_session_type = 0
         other_session_type = max(ips.values()) if ips.keys() else 0
 
-        return [self.health.parameters['Session'].update(sessions),
-                self.health.parameters['MySessionType'].update(my_session_type),
-                self.health.parameters['OtherSessionType'].update(other_session_type)]
+        return [self.get_update('Session', sessions),
+                self.get_update('MySessionType', my_session_type),
+                self.get_update('OtherSessionType', other_session_type)]
 
     def cbit_level(self, value: str):
         """GRCS"""
@@ -56,32 +62,32 @@ class StatGenerator:
             level = 0
         else:
             level = max([int(line.split(',')[-1]) for line in value.split(',3,')[1:]])
-        return [self.health.parameters['CBITLevel'].update(level)]
+        return [self.get_update('CBITLevel', level)]
 
     def voltage(self, value: str):
         bat, dcs = map(float, value[2:].split(','))
-        return [self.health.parameters[self.bat].update(bat),
-                self.health.parameters[self.dcs].update(dcs)]
+        return [self.get_update(self.bat, bat),
+                self.get_update(self.dcs, dcs)]
 
     def temperature(self, value: str):
         rmt, pst, pat = map(int, value[2:].split(','))
-        return [self.health.parameters[self.rmt].update(rmt),
-                self.health.parameters[self.pst].update(pst),
-                self.health.parameters[self.pat].update(pat)]
+        return [self.get_update(self.rmt, rmt),
+                self.get_update(self.pst, pst),
+                self.get_update(self.pat, pat)]
 
     def time_date(self, value: str):
-        now = datetime.now().timestamp()
+        now = datetime.utcnow().timestamp()
         radio_time = datetime.strptime(value.replace('"', ''), '%Y/%m/%d %H:%M:%S').timestamp()
-        return [self.health.parameters['RTCTimeAndDate'].update(now - radio_time)]
+        return [self.get_update('RTCTimeAndDate', now - radio_time)]
 
     def software(self, value: str):
         booted, v1, p1, v2, p2 = value.replace('"', '').split(',')[1:]
-        return [self.health.parameters['PartitionVersions1'].update(v1),
-                self.health.parameters['PartitionVersions2'].update(v2)]
+        return [self.get_update('PartitionVersions1', v1),
+                self.get_update('PartitionVersions2', v2)]
 
     def display_name(self, value: str):
         dsn = value.replace('"', '').split(',')[2]
-        return [self.health.parameters['DisplayedName'].update(dsn)]
+        return [self.get_update('DisplayedName', dsn)]
 
     def first_ip_address(self, value: str):
         return self.ip_address(value, 'IPAddress', 'Subnet', 'Gateway')
@@ -91,13 +97,13 @@ class StatGenerator:
 
     def ip_address(self, ips: str, ip_p, subnet_p, gateway_p):
         ip, subnet, gateway = ips.replace('"', '').replace('::', '').split(',')[1:]
-        return [self.health.parameters[ip_p].update(ip),
-                self.health.parameters[subnet_p].update(subnet),
-                self.health.parameters[gateway_p].update(gateway)]
+        return [self.get_update(ip_p, ip),
+                self.get_update(subnet_p, subnet),
+                self.get_update(gateway_p, gateway)]
 
     def serial_number(self, value: str):
         nd = value.replace('"', '').split(',')
         if int(nd[0]) == 0:
-            return [self.health.parameters['SerialNumber'].update(nd[8])]
+            return [self.get_update('SerialNumber', nd[8])]
         else:
             return []

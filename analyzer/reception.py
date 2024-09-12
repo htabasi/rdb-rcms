@@ -2,15 +2,17 @@ import pandas as pd
 import numpy as np
 
 
-class ReceptionUpdater:
+class Reception:
     def __init__(self, radio, log):
         self.radio = radio
         self.log = log
+        self.category = {'FFRS', 'RCRI'}
         self.id, self.bid = 0, 0
         self.buffer = [{}, {}]
         self.category = {'Reception'}
 
-    def add(self, time_tag, rssi=None, sq=None, sq_on=None, sq_off=None):
+    def add(self, key, items):
+        time_tag, value = items
         self.buffer[self.bid][self.id] = {'Time': time_tag, 'RSSI': rssi, 'SQ': sq, 'SQ_ON': sq_on, 'SQ_OFF': sq_off}
         self.id += 1
 

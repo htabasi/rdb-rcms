@@ -1,1 +1,1 @@
-DELETE HealthMonitor.RadioStatus WHERE Radio_Name='{}';
+DELETE FROM HealthMonitor.RadioStatus WHERE Radio_Name='{}';

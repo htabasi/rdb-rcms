@@ -62,7 +62,7 @@ class HealthMonitor(Thread):
             'GRSE': 'SNMPEnable',
             'GRSN': 'SNMPCommunityString',
             'GRVE': 'GB2PPVersion',
-            'IRO': 'RSSIOutputType',
+            'RIRO': 'RSSIOutputType',
             'MSAC': 'ActivationStatus',
             'MSTY': 'MainStandbyType',
             'RCDP': 'PTTTimeout',
@@ -80,6 +80,9 @@ class HealthMonitor(Thread):
             'RIVP': 'EXTVSWRPolarity',
             'RUFL': 'FTPLogin',
             'RUFP': 'FTPPassword'
+        }
+        self.codes = {
+            'AnalyzedTXPowerValue', 'AnalyzedModulationDepthValue', 'AnalyzedVSWRValue', 'AnalyzedExternalVSWRVoltage',
         }
 
         # self.key_code_convert = {
@@ -148,11 +151,22 @@ class HealthMonitor(Thread):
 
         self.stat_gen = StatGenerator(self)
         self.insert = get_file(os.path.join(SQL_INSERT_HEALTH, 'radio_status.sql')).format(self.radio.radio.name)
+        self.acceptable_keys = set(list(self.key_code_convert.keys()) +
+                                   list(self.stat_gen.key_list.keys())).union(self.codes)
+        self.disabled_codes, self.disabled_keys = set(), set()
+        self.log.debug(f'acceptable_keys: {self.acceptable_keys}')
 
     def create_parameters(self, fixed_values, multi_levels, ranges, equal_strings, pattern_strings):
         ml_codes = {}
         rn_codes = {}
         for data in multi_levels:
+            self.log.debug(f'Range Parameter: {data}')
+            if data['enable'] == 0:
+                self.log.debug(f'Parameter with code {data["code"]} and key {data["key"]} is disabled')
+                self.disabled_codes.add(data['code'])
+                if data['key']:
+                    self.disabled_keys.add(data['key'])
+                continue
             if data['code'] in ml_codes:
                 ml_codes[data['code']]['stats'].append({'value': data['value'],
                                                         'severity': data['severity'],
@@ -167,6 +181,13 @@ class HealthMonitor(Thread):
                                                      'severity': data['severity'],
                                                      'message': data['message']}]}
         for data in ranges:
+            self.log.debug(f'Range Parameter: {data}')
+            if data['enable'] == 0:
+                self.log.debug(f'Parameter with code {data["code"]} and key {data["key"]} is disabled')
+                self.disabled_codes.add(data['code'])
+                if data['key']:
+                    self.disabled_keys.add(data['key'])
+                continue
             if data['code'] in rn_codes:
                 rn_codes[data['code']]['stats'].append({'r_start': data['r_start'],
                                                         'r_end': data['r_end'],
@@ -185,17 +206,53 @@ class HealthMonitor(Thread):
                                                      'message': data['message']}]}
 
         for data in fixed_values:
-            self.parameters[data['code']] = FixedValue(health=self, log=self.log, **data)
+            self.log.debug(f'Range Parameter: {data}')
+            self.add_parameter(data, FixedValue)
         for data in equal_strings:
-            self.parameters[data['code']] = EqualString(health=self, log=self.log, **data)
+            self.log.debug(f'Range Parameter: {data}')
+            self.add_parameter(data, EqualString)
         for data in pattern_strings:
-            self.parameters[data['code']] = PatternString(health=self, log=self.log, **data)
+            self.log.debug(f'Range Parameter: {data}')
+            self.add_parameter(data, PatternString)
+        #
+        # for data in fixed_values:
+        #     if data['enable'] == 0:
+        #         self.disabled_codes.add(data['code'])
+        #         if data['key']:
+        #             self.disabled_keys.add(data['key'])
+        #         continue
+        #     self.parameters[data['code']] = FixedValue(health=self, log=self.log, **data)
+        # for data in equal_strings:
+        #     if data['enable'] == 0:
+        #         self.disabled_codes.add(data['code'])
+        #         if data['key']:
+        #             self.disabled_keys.add(data['key'])
+        #         continue
+        #     self.parameters[data['code']] = EqualString(health=self, log=self.log, **data)
+        # for data in pattern_strings:
+        #     if data['enable'] == 0:
+        #         self.disabled_codes.add(data['code'])
+        #         if data['key']:
+        #             self.disabled_keys.add(data['key'])
+        #         continue
+        #     self.parameters[data['code']] = PatternString(health=self, log=self.log, **data)
         for code, data in ml_codes.items():
             self.parameters[code] = MultiLevel(health=self, log=self.log, **data)
         for code, data in rn_codes.items():
             self.parameters[code] = Range(health=self, log=self.log, **data)
 
         self.log.debug(f'Parameters: {list(self.parameters.keys())}')
+        self.log.debug(f'Disabled parameters by codes: {self.disabled_codes}')
+        self.log.debug(f'Disabled parameters by keys: {self.disabled_keys}')
+
+    def add_parameter(self, data, parameter_class):
+        if data['enable'] == 0:
+            self.log.debug(f'Parameter with code {data["code"]} and key {data["key"]} is disabled')
+            self.disabled_codes.add(data['code'])
+            if data['key']:
+                self.disabled_keys.add(data['key'])
+            return
+        self.parameters[data['code']] = parameter_class(health=self, log=self.log, **data)
 
     def status(self):
         stat = self.alive_counter != self.alive_counter_prev
@@ -206,7 +263,8 @@ class HealthMonitor(Thread):
         return self.insert.format(id, level, message)
 
     def add(self, key, value):
-        self.buffer[self.writer].append((key, value))
+        if key in self.acceptable_keys and key not in self.disabled_keys and key not in self.disabled_codes:
+            self.buffer[self.writer].append((key, value))
 
     def run(self) -> None:
         self.log.info('Started')
@@ -235,17 +293,23 @@ class HealthMonitor(Thread):
             key, value = buffer.pop(0)
             query_list = []
             try:
-                parameter = self.key_code_convert[key]
-            except KeyError:
-                if key in self.stat_gen.key_list:
+                if key in self.codes and key not in self.disabled_codes:
+                    query_list.append(self.parameters[key].update(value))
+
+                elif key in self.key_code_convert and key not in self.disabled_keys:
+                    parameter = self.key_code_convert[key]
+                    query_list.append(self.parameters[parameter].update(value))
+
+                elif key in self.stat_gen.key_list:
                     query_list.extend(self.stat_gen.get_stat(key, value))
+
                 else:
-                    continue
+                    self.log.debug(f'Unspecified parameter for key {key} with value {value}')
+
             except Exception as e:
                 self.err_update.add()
-                self.log.exception(f'Error occurred during query generation: {e}, {e.args}')
-            else:
-                query_list.append(self.parameters[parameter].update(value))
+                self.log.exception(
+                    f'Error occurred during query generation for key:{key}, value:{value}: {e}, {e.args}')
             finally:
                 for query in query_list:
                     if query:

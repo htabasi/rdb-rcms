@@ -196,6 +196,9 @@ class Radio(Core):
         else:
             self.generator.add(time_tag, key, value)
 
+        if key in self.analyzer.keys:
+            self.analyzer.add(key, (time_tag, value))
+
     def event_on_trap_accepted(self, time_tag, key, stat):
         self.log.debug(f"TrapAccepted {time_tag} {key} > { {'0': 'OFF', '1': 'ON'}.get(stat)}")
 

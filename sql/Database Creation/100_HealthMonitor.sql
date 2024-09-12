@@ -24,7 +24,8 @@ CREATE TABLE HealthMonitor.Parameters
     id            INT IDENTITY PRIMARY KEY,
     ParameterCode VARCHAR(50) UNIQUE NOT NULL,
     ParameterName VARCHAR(50)        NOT NULL,
-    ParameterType TINYINT            NOT NULL FOREIGN KEY REFERENCES HealthMonitor.ParameterTypes (id)
+    ParameterType TINYINT            NOT NULL FOREIGN KEY REFERENCES HealthMonitor.ParameterTypes (id),
+    [Key]         INT DEFAULT Null FOREIGN KEY REFERENCES Command.KeyInformation (id)
 );
 
 CREATE TABLE HealthMonitor.Messages
@@ -41,8 +42,8 @@ CREATE TABLE HealthMonitor.FixedValue
     Enable      TINYINT     NOT NULL DEFAULT 1 FOREIGN KEY REFERENCES Common.EnableDisable (id),
     correct     VARCHAR(50) NOT NULL,
     severity    TINYINT     NOT NULL FOREIGN KEY REFERENCES HealthMonitor.StatusTypes (id),
-    normal_msg  INT NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Messages (id),
-    message     INT NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Messages (id)
+    normal_msg  INT         NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Messages (id),
+    message     INT         NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Messages (id)
 );
 
 CREATE TABLE HealthMonitor.MultiLevel
@@ -52,7 +53,7 @@ CREATE TABLE HealthMonitor.MultiLevel
     Radio_Name  CHAR(10)    NOT NULL FOREIGN KEY REFERENCES Radio.Radio (Name),
     Enable      TINYINT     NOT NULL DEFAULT 1 FOREIGN KEY REFERENCES Common.EnableDisable (id),
     correct     VARCHAR(50) NOT NULL,
-    normal_msg  INT NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Messages (id)
+    normal_msg  INT         NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Messages (id)
 );
 
 CREATE TABLE HealthMonitor.MultiLevelStats
@@ -61,28 +62,28 @@ CREATE TABLE HealthMonitor.MultiLevelStats
     MultiLevelID INT         NOT NULL FOREIGN KEY REFERENCES HealthMonitor.MultiLevel (id),
     value        VARCHAR(50) NOT NULL,
     severity     TINYINT     NOT NULL FOREIGN KEY REFERENCES HealthMonitor.StatusTypes (id),
-    message      INT NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Messages (id)
+    message      INT         NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Messages (id)
 );
 
 CREATE TABLE HealthMonitor.Range
 (
     id          INT IDENTITY PRIMARY KEY,
-    ParameterID INT         NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Parameters (id),
-    Radio_Name  CHAR(10)    NOT NULL FOREIGN KEY REFERENCES Radio.Radio (Name),
-    Enable      TINYINT     NOT NULL DEFAULT 1 FOREIGN KEY REFERENCES Common.EnableDisable (id),
+    ParameterID INT           NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Parameters (id),
+    Radio_Name  CHAR(10)      NOT NULL FOREIGN KEY REFERENCES Radio.Radio (Name),
+    Enable      TINYINT       NOT NULL DEFAULT 1 FOREIGN KEY REFERENCES Common.EnableDisable (id),
     start       DECIMAL(5, 2) NOT NULL,
     [end]       DECIMAL(5, 2) NOT NULL,
-    normal_msg  INT NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Messages (id)
+    normal_msg  INT           NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Messages (id)
 );
 
 CREATE TABLE HealthMonitor.RangeStats
 (
     id          INT IDENTITY PRIMARY KEY,
-    RangeID     INT         NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Range (id),
+    RangeID     INT           NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Range (id),
     range_start DECIMAL(5, 2) NOT NULL,
     range_end   DECIMAL(5, 2) NOT NULL,
-    severity    TINYINT     NOT NULL FOREIGN KEY REFERENCES HealthMonitor.StatusTypes (id),
-    message     INT NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Messages (id)
+    severity    TINYINT       NOT NULL FOREIGN KEY REFERENCES HealthMonitor.StatusTypes (id),
+    message     INT           NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Messages (id)
 );
 
 CREATE TABLE HealthMonitor.EqualString
@@ -93,8 +94,8 @@ CREATE TABLE HealthMonitor.EqualString
     Enable      TINYINT     NOT NULL DEFAULT 1 FOREIGN KEY REFERENCES Common.EnableDisable (id),
     correct     VARCHAR(50) NOT NULL,
     severity    TINYINT     NOT NULL FOREIGN KEY REFERENCES HealthMonitor.StatusTypes (id),
-    normal_msg  INT NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Messages (id),
-    message     INT NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Messages (id)
+    normal_msg  INT         NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Messages (id),
+    message     INT         NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Messages (id)
 );
 
 CREATE TABLE HealthMonitor.PatternString
@@ -105,15 +106,15 @@ CREATE TABLE HealthMonitor.PatternString
     Enable      TINYINT      NOT NULL DEFAULT 1 FOREIGN KEY REFERENCES Common.EnableDisable (id),
     pattern     VARCHAR(100) NOT NULL,
     severity    TINYINT      NOT NULL FOREIGN KEY REFERENCES HealthMonitor.StatusTypes (id),
-    normal_msg  INT NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Messages (id),
-    message     INT NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Messages (id)
+    normal_msg  INT          NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Messages (id),
+    message     INT          NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Messages (id)
 );
 
 CREATE TABLE HealthMonitor.RadioStatus
 (
     id          INT IDENTITY PRIMARY KEY CLUSTERED,
     Radio_Name  CHAR(10) FOREIGN KEY REFERENCES Radio.Radio (Name),
-    ParameterID INT         NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Parameters (id),
-    severity    TINYINT     NOT NULL FOREIGN KEY REFERENCES HealthMonitor.StatusTypes (id),
+    ParameterID INT          NOT NULL FOREIGN KEY REFERENCES HealthMonitor.Parameters (id),
+    severity    TINYINT      NOT NULL FOREIGN KEY REFERENCES HealthMonitor.StatusTypes (id),
     message     VARCHAR(100) NOT NULL
 );

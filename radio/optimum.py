@@ -33,7 +33,8 @@ class OptimumGenerator:
         self.disconnection_updated = False
 
     def update_module_stat(self, *args):
-        self.log.debug(f"Status Updating")
+        if self.name.startswith('BRG_'):
+            self.log.debug(f"Status Updating")
         kv, value = f"{'UpdateTime'}='{str(args[0])[:23]}', ", args[1]
         for item in value:
             if item in ['id', 'Name', 'StartTime', 'UpdateTime', 'PID']:
@@ -43,13 +44,17 @@ class OptimumGenerator:
         self.executor.add(self.module.format(kv[:-2].replace('None', 'NULL'), value['id']))
 
     def update_counter_timer(self):
+        if self.name.startswith('BRG_'):
+            self.log.debug(f"Status Updating: timer_planner.pln_counter={self.root.timer_planner.pln_counter.agg}")
         self.update_gauges('Counter', self.counters, self.counter_update)
         self.update_gauges('Timer', self.timers, self.timer_update)
 
     def update_gauges(self, category, gauges, update_query):
-        self.log.debug(f"{category} Updating")
+        if self.name.startswith('BRG_'):
+            self.log.debug(f"{category} Updating")
         agg_update, res_update = get_updates(gauges)
-        self.log.debug(f"Write on DB:\n   aggregate : {agg_update}\n   resettable: {res_update}")
+        if self.name.startswith('BRG_'):
+            self.log.debug(f"Write on DB:\n   aggregate : {agg_update}\n   resettable: {res_update}")
         self.executor.add(update_query.format(agg_update, self.name, 0))
         self.executor.add(update_query.format(res_update, self.name, 1))
 

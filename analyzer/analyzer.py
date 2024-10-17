@@ -2,6 +2,7 @@ from threading import Thread
 from time import sleep, time
 from random import randint
 
+from analyzer.reception import Reception
 from analyzer.transmission import Transmission
 from analyzer.updater import CounterUpdater, TimerUpdater
 
@@ -29,6 +30,9 @@ class Analyzer(Thread):
         if self.radio.radio.type == 'TX':
             self.transmission = Transmission(self.health, self.radio.radio, self.log)
             self.parts.append(self.transmission)
+        else:
+            self.reception = Reception(self.health, self.radio.radio, self.log)
+            self.parts.append(self.reception)
 
         self.execution = {interval: time() + randint(0, interval * 60) for interval in self.tasks}
         self.selector = {key: part for part in self.parts for key in part.category}
@@ -53,6 +57,9 @@ class Analyzer(Thread):
 
             self.alive_counter += 1
             sleep(self.calm)
+
+        if hasattr(self, 'reception'):
+            self.reception.result.close()
         self.log.info('Finished')
 
     def generate(self):
@@ -90,4 +97,6 @@ class Analyzer(Thread):
             except Exception as e:
                 self.err_generate += 1
                 self.log.exception(f'Error on Generate Transmission Queries or extending query list! {e}')
+        else:
+            self.reception.execute()
         sleep(self.calm)

@@ -71,6 +71,8 @@ class RadioModule:
                 self.send_message(INFO, 'Alive', 'Radio Module', f"{self.name} with PID {self.pid} is Alive.")
                 self.first_announce = False
             self.alive_timer_start = time()
+
+        if self.process.is_alive():
             self.alive_action()
 
     def alive_action(self):

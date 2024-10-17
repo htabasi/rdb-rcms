@@ -1,7 +1,7 @@
-alter table HealthMonitor.Parameters
-    add [Key] INT default Null FOREIGN KEY REFERENCES Command.KeyInformation (id)
-go
-
+-- alter table HealthMonitor.Parameters
+--     add [Key] INT default Null FOREIGN KEY REFERENCES Command.KeyInformation (id)
+-- go
+--
 
 UPDATE HealthMonitor.Parameters
     SET [Key]=(SELECT id From Command.KeyInformation Where CKey='AIAD')

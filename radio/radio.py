@@ -197,6 +197,7 @@ class Radio(Core):
             self.generator.add(time_tag, key, value)
 
         if key in self.analyzer.keys:
+            # self.log.error(f'Sending to analyzer: {key} {time_tag} {value}')
             self.analyzer.add(key, (time_tag, value))
 
     def event_on_trap_accepted(self, time_tag, key, stat):

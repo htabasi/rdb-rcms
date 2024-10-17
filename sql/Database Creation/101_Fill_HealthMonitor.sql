@@ -32,6 +32,10 @@ VALUES (0, 'Normal', 'N', '#3cb043', '#000000'),
        (4, 'Critical', 'C', '#ff2400', '#000000'),
        (5, 'Emergency', 'M', '#8d021f', '#A8FFFF');
 
+INSERT INTO HealthMonitor.StatusTypes
+    (id, StatusName, StatusChar, BackgroundColor, ForegroundColor)
+VALUES (6, 'Unreachable', 'U', '#333333', '#000000')
+
 INSERT INTO HealthMonitor.ParameterTypes
     (id, Type)
 VALUES (1, 'FixedValue'),
@@ -40,6 +44,25 @@ VALUES (1, 'FixedValue'),
        (4, 'EqualString'),
        (5, 'PatternString')
 GO
+
+ALTER Table HealthMonitor.ParameterTypes
+    ADD Code VARCHAR(3) NOT NULL Default 'RV';
+
+UPDATE HealthMonitor.ParameterTypes
+Set Code='FV'
+Where id = 1
+UPDATE HealthMonitor.ParameterTypes
+Set Code='ML'
+Where id = 2
+UPDATE HealthMonitor.ParameterTypes
+Set Code='RV'
+Where id = 3
+UPDATE HealthMonitor.ParameterTypes
+Set Code='ES'
+Where id = 4
+UPDATE HealthMonitor.ParameterTypes
+Set Code='PS'
+Where id = 5
 
 INSERT INTO HealthMonitor.Parameters (ParameterCode, ParameterName, ParameterType)
 VALUES ('AudioInterface', 'Audio Interface', 1);
@@ -289,79 +312,152 @@ VALUES ('CBIT Warning Detected');
 INSERT INTO HealthMonitor.Messages (message)
 VALUES ('CBIT Error Detected');
 GO
-INSERT INTO HealthMonitor.Messages (message) VALUES ('Audio Delay above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('Audio Delay High ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('Audio Level Low ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('Audio Level below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('Audio Level above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('Local Mode Timeout above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('Time and Date difference is above Normal ({:.3f}) seconds');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('Time and Date is not Sync');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('Audio Level ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RSSI Squelch Threshold below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RSSI Squelch Threshold above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Battery Voltage Low ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Battery Voltage below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Battery Voltage above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Battery Voltage High ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RX DC Section Voltage Low ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RX DC Section Voltage below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RX DC Section Voltage above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RX DC Section Voltage High ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Power Amplifier Temperatures Low ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Power Amplifier Temperatures below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Power Amplifier Temperatures above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Power Amplifier Temperatures High ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Power Supply Temperatures Low ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Power Supply Temperatures below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Power Supply Temperatures above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Power Supply Temperatures High ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Radio Module Temperatures Low ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Radio Module Temperatures below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Radio Module Temperatures above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('RX Radio Module Temperatures High ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('SNR Squelch Threshold below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('SNR Squelch Threshold above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('External VSWR Voltage Low ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('EXT VSWR limit below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('EXT VSWR limit above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('Audio Level ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('Modulation Depth Setting Low ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('Modulation Depth Setting below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('Modulation Depth Value Low ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('Modulation Depth Value below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('Modulation Depth Value above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('PTT Timeout below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('PTT Timeout above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Battery Voltage Low ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Battery Voltage below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Battery Voltage above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Battery Voltage High ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX DC Section Voltage Low ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX DC Section Voltage below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX DC Section Voltage above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX DC Section Voltage High ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('Tx Low Power Level below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('Tx Low Power Level above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Amplifier Temperatures Low ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Amplifier Temperatures below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Amplifier Temperatures above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Amplifier Temperatures High ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Supply Temperatures Low ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Supply Temperatures below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Supply Temperatures above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Supply Temperatures High ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Value Low ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Value Below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Power Value above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('Pre-Emphasis above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('Pre-Emphasis High ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Radio Module Temperatures Low ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Radio Module Temperatures below Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Radio Module Temperatures above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('TX Radio Module Temperatures High ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('VSWR Value above Normal ({})');
-INSERT INTO HealthMonitor.Messages (message) VALUES ('VSWR Value High ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('Audio Delay above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('Audio Delay High ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('Audio Level Low ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('Audio Level below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('Audio Level above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('Local Mode Timeout above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('Time and Date difference is above Normal ({:.3f}) seconds');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('Time and Date is not Sync');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('Audio Level ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RSSI Squelch Threshold below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RSSI Squelch Threshold above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RX Battery Voltage Low ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RX Battery Voltage below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RX Battery Voltage above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RX Battery Voltage High ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RX DC Section Voltage Low ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RX DC Section Voltage below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RX DC Section Voltage above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RX DC Section Voltage High ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RX Power Amplifier Temperatures Low ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RX Power Amplifier Temperatures below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RX Power Amplifier Temperatures above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RX Power Amplifier Temperatures High ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RX Power Supply Temperatures Low ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RX Power Supply Temperatures below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RX Power Supply Temperatures above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RX Power Supply Temperatures High ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RX Radio Module Temperatures Low ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RX Radio Module Temperatures below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RX Radio Module Temperatures above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('RX Radio Module Temperatures High ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('SNR Squelch Threshold below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('SNR Squelch Threshold above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('External VSWR Voltage Low ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('EXT VSWR limit below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('EXT VSWR limit above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('Audio Level ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('Modulation Depth Setting Low ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('Modulation Depth Setting below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('Modulation Depth Value Low ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('Modulation Depth Value below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('Modulation Depth Value above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('PTT Timeout below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('PTT Timeout above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX Battery Voltage Low ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX Battery Voltage below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX Battery Voltage above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX Battery Voltage High ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX DC Section Voltage Low ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX DC Section Voltage below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX DC Section Voltage above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX DC Section Voltage High ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('Tx Low Power Level below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('Tx Low Power Level above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX Power Amplifier Temperatures Low ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX Power Amplifier Temperatures below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX Power Amplifier Temperatures above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX Power Amplifier Temperatures High ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX Power Supply Temperatures Low ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX Power Supply Temperatures below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX Power Supply Temperatures above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX Power Supply Temperatures High ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX Power Value Low ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX Power Value Below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX Power Value above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('Pre-Emphasis above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('Pre-Emphasis High ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX Radio Module Temperatures Low ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX Radio Module Temperatures below Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX Radio Module Temperatures above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('TX Radio Module Temperatures High ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('VSWR Value above Normal ({})');
+INSERT INTO HealthMonitor.Messages (message)
+VALUES ('VSWR Value High ({})');
 
 GO
 INSERT INTO HealthMonitor.Messages (message)
@@ -1801,219 +1897,217 @@ go
 
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='AIAD')
-    Where ParameterCode='AudioDelay'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'AIAD')
+Where ParameterCode = 'AudioDelay'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='AIAI')
-    Where ParameterCode='AudioInterface'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'AIAI')
+Where ParameterCode = 'AudioInterface'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='AICA')
-    Where ParameterCode='TxAudioALC'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'AICA')
+Where ParameterCode = 'TxAudioALC'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='AIEL')
-    Where ParameterCode='LineInterfaceInLocalMode'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'AIEL')
+Where ParameterCode = 'LineInterfaceInLocalMode'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='AIGA')
-    Where ParameterCode='RxAudioAGC'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'AIGA')
+Where ParameterCode = 'RxAudioAGC'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='AILA')
-    Where ParameterCode='AudioLevel'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'AILA')
+Where ParameterCode = 'AudioLevel'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='AITP')
-    Where ParameterCode='TxPreEmphasis'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'AITP')
+Where ParameterCode = 'TxPreEmphasis'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='ERBE')
-    Where ParameterCode='BootErrorList'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'ERBE')
+Where ParameterCode = 'BootErrorList'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='ERGN')
-    Where ParameterCode='GONOGOStatus'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'ERGN')
+Where ParameterCode = 'GONOGOStatus'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='FFCO')
-    Where ParameterCode='CarrierOverride'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'FFCO')
+Where ParameterCode = 'CarrierOverride'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='FFEA')
-    Where ParameterCode='ACARSDataMode'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'FFEA')
+Where ParameterCode = 'ACARSDataMode'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='FFLM')
-    Where ParameterCode='LocalMode'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'FFLM')
+Where ParameterCode = 'LocalMode'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='FFLT')
-    Where ParameterCode='LocalModeTimeout'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'FFLT')
+Where ParameterCode = 'LocalModeTimeout'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='FFMD')
-    Where ParameterCode='ModulationMode'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'FFMD')
+Where ParameterCode = 'ModulationMode'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='FFSC')
-    Where ParameterCode='SingleChannel'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'FFSC')
+Where ParameterCode = 'SingleChannel'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='FFSL')
-    Where ParameterCode='SQLogicOperation'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'FFSL')
+Where ParameterCode = 'SQLogicOperation'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='FFSN')
-    Where ParameterCode='SNRSquelchThreshold'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'FFSN')
+Where ParameterCode = 'SNRSquelchThreshold'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='FFSP')
-    Where ParameterCode='ChannelSpacing'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'FFSP')
+Where ParameterCode = 'ChannelSpacing'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='FFSQ')
-    Where ParameterCode='SQCircuit'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'FFSQ')
+Where ParameterCode = 'SQCircuit'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='FFSR')
-    Where ParameterCode='RSSISquelchThreshold'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'FFSR')
+Where ParameterCode = 'RSSISquelchThreshold'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='FFTO')
-    Where ParameterCode='CarrierOffset'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'FFTO')
+Where ParameterCode = 'CarrierOffset'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='FFTR')
-    Where ParameterCode='Frequency'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'FFTR')
+Where ParameterCode = 'Frequency'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='GRAS')
-    Where ParameterCode='ATRSwitchMode'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'GRAS')
+Where ParameterCode = 'ATRSwitchMode'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='GRDH')
-    Where ParameterCode='DHCPEnabled'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'GRDH')
+Where ParameterCode = 'DHCPEnabled'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='GRHN')
-    Where ParameterCode='Hostname'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'GRHN')
+Where ParameterCode = 'Hostname'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='GRIE')
-    Where ParameterCode='SecondIPAddressEnabled'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'GRIE')
+Where ParameterCode = 'SecondIPAddressEnabled'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='GRIN')
-    Where ParameterCode='InstallationInfo'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'GRIN')
+Where ParameterCode = 'InstallationInfo'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='GRIS')
-    Where ParameterCode='RxInputSensitivity'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'GRIS')
+Where ParameterCode = 'RxInputSensitivity'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='GRIV')
-    Where ParameterCode='IPv6Enabled'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'GRIV')
+Where ParameterCode = 'IPv6Enabled'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='GRLR')
-    Where ParameterCode='MeasureRXAudioLevel'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'GRLR')
+Where ParameterCode = 'MeasureRXAudioLevel'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='GRLT')
-    Where ParameterCode='MeasureTXAudioLevel'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'GRLT')
+Where ParameterCode = 'MeasureTXAudioLevel'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='GRNA')
-    Where ParameterCode='NTPSyncActive'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'GRNA')
+Where ParameterCode = 'NTPSyncActive'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='GRNS')
-    Where ParameterCode='NTPServer'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'GRNS')
+Where ParameterCode = 'NTPServer'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='GRSE')
-    Where ParameterCode='SNMPEnable'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'GRSE')
+Where ParameterCode = 'SNMPEnable'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='GRSN')
-    Where ParameterCode='SNMPCommunityString'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'GRSN')
+Where ParameterCode = 'SNMPCommunityString'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='GRVE')
-    Where ParameterCode='GB2PPVersion'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'GRVE')
+Where ParameterCode = 'GB2PPVersion'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='RIRO')
-    Where ParameterCode='RSSIOutputType'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'RIRO')
+Where ParameterCode = 'RSSIOutputType'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='MSAC')
-    Where ParameterCode='ActivationStatus'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'MSAC')
+Where ParameterCode = 'ActivationStatus'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='MSTY')
-    Where ParameterCode='MainStandbyType'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'MSTY')
+Where ParameterCode = 'MainStandbyType'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='RCDP')
-    Where ParameterCode='PTTTimeout'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'RCDP')
+Where ParameterCode = 'PTTTimeout'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='RCIT')
-    Where ParameterCode='TXInhibition'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'RCIT')
+Where ParameterCode = 'TXInhibition'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='RCLP')
-    Where ParameterCode='TxLowPowerLevel'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'RCLP')
+Where ParameterCode = 'TxLowPowerLevel'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='RCMG')
-    Where ParameterCode='ModulationDepthSetting'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'RCMG')
+Where ParameterCode = 'ModulationDepthSetting'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='RCMO')
-    Where ParameterCode='ModulationDepthValue'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'RCMO')
+Where ParameterCode = 'ModulationDepthValue'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='RCPP')
-    Where ParameterCode='PresetPageNumber'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'RCPP')
+Where ParameterCode = 'PresetPageNumber'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='RCTO')
-    Where ParameterCode='TXPowerValue'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'RCTO')
+Where ParameterCode = 'TXPowerValue'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='RCTV')
-    Where ParameterCode='VSWRValue'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'RCTV')
+Where ParameterCode = 'VSWRValue'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='RCTW')
-    Where ParameterCode='VSWRLED'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'RCTW')
+Where ParameterCode = 'VSWRLED'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='RCVV')
-    Where ParameterCode='ExternalVSWRVoltage'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'RCVV')
+Where ParameterCode = 'ExternalVSWRVoltage'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='RIPC')
-    Where ParameterCode='PTTInputConfiguration'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'RIPC')
+Where ParameterCode = 'PTTInputConfiguration'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='RIVL')
-    Where ParameterCode='EXTVSWRlimit'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'RIVL')
+Where ParameterCode = 'EXTVSWRlimit'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='RIVP')
-    Where ParameterCode='EXTVSWRPolarity'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'RIVP')
+Where ParameterCode = 'EXTVSWRPolarity'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='RUFL')
-    Where ParameterCode='FTPLogin'
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'RUFL')
+Where ParameterCode = 'FTPLogin'
 
 UPDATE HealthMonitor.Parameters
-    SET [Key]=(SELECT id From Command.KeyInformation Where CKey='RUFP')
-    Where ParameterCode='FTPPassword'
-
-
+SET [Key]=(SELECT id From Command.KeyInformation Where CKey = 'RUFP')
+Where ParameterCode = 'FTPPassword'

@@ -1,0 +1,1 @@
+Select Radio_Name, ParameterID 'pid', severity From HealthMonitor.RadioStatus;

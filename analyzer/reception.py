@@ -1,27 +1,45 @@
+from datetime import datetime
+from random import randint
+from time import time
+
 import pandas as pd
 import numpy as np
 
 
 class Reception:
-    def __init__(self, radio, log):
+    def __init__(self, health, radio, log):
+        self.health = health
         self.radio = radio
         self.log = log
+        self.interval = 5  # Minute
+        self.execution = time() + randint(0, self.interval * 60)
+        self.execute_now = False
+        self.start, self.length = time(), 0.0
+        self.sq = 0
+        self.time_tag = datetime.utcnow()
         self.category = {'FFRS', 'RCRI'}
-        self.id, self.bid = 0, 0
-        self.buffer = [{}, {}]
-        self.category = {'Reception'}
+        self.buffer, self.stack = [[], []], [[], []]
+
+        self.result = open(f'export/{self.radio.name}_reception.txt', 'w')
 
     def add(self, key, items):
         time_tag, value = items
-        self.buffer[self.bid][self.id] = {'Time': time_tag, 'RSSI': rssi, 'SQ': sq, 'SQ_ON': sq_on, 'SQ_OFF': sq_off}
-        self.id += 1
+        if key == 'FFRS':
+            self.buffer[self.sq].append(int(value) - 120)
+        elif key == 'RCRI':
+            self.sq = int(value)
+            self.stack[1 - self.sq].append(self.buffer[1 - self.sq].copy())
+            self.buffer[1 - self.sq].clear()
+            self.execute_now = True
 
-    def calculate(self, bid):
-        df = pd.DataFrame.from_dict(self.buffer[bid])
-        # در این قسمت باید دیکشنری بافر به دیتافریم پانداس تبدیل شود
-        self.buffer[bid].clear()
+    def execute(self):
+        self.log.debug('Executing reception')
+        if time() >= self.execution or self.execute_now:
+            self.log.debug('Running reception action')
+            return self.run()
 
-    def generate(self, key):
-        self.bid = 1 - self.bid
-        self.calculate(1 - self.bid)
-
+    def run(self):
+        self.result.write(f"SQ OFF: {self.stack[0]}")
+        self.result.write(f"SQ ON: {self.stack[1]}")
+        self.stack[0].clear()
+        self.stack[1].clear()

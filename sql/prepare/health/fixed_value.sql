@@ -11,5 +11,5 @@ FROM HealthMonitor.Parameters HPA
          INNER JOIN HealthMonitor.FixedValue HFV ON HPA.id = HFV.ParameterID
          INNER JOIN HealthMonitor.Messages HME ON HFV.normal_msg = HME.id
          INNER JOIN HealthMonitor.Messages HMS ON HFV.message = HMS.id
-         INNER JOIN Command.KeyInformation CKI ON HPA.[Key] = CKI.id
+         FULL JOIN Command.KeyInformation CKI ON HPA.[Key] = CKI.id
 Where Radio_Name = '{}';

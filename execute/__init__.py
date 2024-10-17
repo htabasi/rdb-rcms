@@ -8,15 +8,18 @@ from settings import SQL_SELECT
 
 def get_connection(log=None, server=None):
     if server is None:
+        # server = 'olympus.liara.cloud,31430'
         server = 'ProBook\\Pro'
         # server = '192.168.1.201'
     database = 'RCMS'
+    # username = 'sa'
     username = 'rdbu'
     password = 'HadiTabasiAslAvval'
+    # password = '8Xc2dbUeK4H0jFwiQQxher7U'
     # Driver = 'ODBC Driver 18 for SQL Server';
     # Server = your_server;
     # Encrypt = yes;
-    # Trusted_Connection = yes
+    # Trusted_Connection = 'yes'
 
     try:
         connection = db.connect(server=server, user=username, password=password, database=database)
@@ -135,17 +138,10 @@ def execute_no_answer_query(connection, query, log=None):
 if __name__ == '__main__':
     co = get_connection()
     a = get_multiple_row(co, """
-    SELECT
-        PT.Type,
-        HMP.ParameterName,
-        HPS.ParameterValue,
-        ST.id,
-        ST.StatusName,
-        HPS.Message
-    From HealthMonitor.ParameterStatuses HPS
-    INNER JOIN HealthMonitor.Parameters HMP on HMP.id = HPS.ParameterID
-    INNER JOIN HealthMonitor.ParameterTypes PT on PT.id = HMP.ParameterType
-    INNER JOIN HealthMonitor.StatusTypes ST on ST.id = HPS.StatusTypeID""")
+    Select Station, Count(severity) As 'Warning'
+    From HealthMonitor.FrequencyStatus
+    Where severity=1
+    GROUP BY Station""")
     # a = get_scalar_answer(co, 'select GRTI from Setting.Status')
     print(a)
     print(type(a))

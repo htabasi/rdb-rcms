@@ -1,0 +1,1 @@
+SELECT Part as 'App', FileLevel, FileFormat, StreamLevel, StreamFormat FROM Application.StatusUpdater

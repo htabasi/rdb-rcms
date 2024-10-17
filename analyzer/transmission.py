@@ -26,12 +26,6 @@ class Transmission:
         self.time_tag = datetime.utcnow()
         self.insert = get_file(os.path.join(SQL_INSERT_ANALYZE, 'transmission.sql'))
 
-    def execute(self):
-        self.log.debug('Executing transmission')
-        if time() >= self.execution or self.execute_now:
-            self.log.debug('Doing transmission action')
-            return self.do()
-
     def add(self, key, items):
         time_tag, value = items
         if key == 'RCTO':
@@ -39,6 +33,7 @@ class Transmission:
             if power != 0:
                 self.power.append(power)
         elif key == 'RCMO':
+            # self.add_test_data('RCMO : ' + str(value))
             mod = int(value)
             if mod != '0':
                 self.modulation.append(mod)
@@ -60,11 +55,20 @@ class Transmission:
                 self.length = time() - self.start
                 self.time_tag = time_tag
 
-    def do(self):
+    def execute(self):
+        self.log.debug('Executing transmission')
+        if time() >= self.execution or self.execute_now:
+            self.log.debug('Running transmission action')
+            return self.run()
+
+    def run(self):
         query_list = []
         if self.modulation:
+            # self.add_test_data('MOD : ' + str(self.modulation))
             self.log.debug(f'Transmission Action: modulation: {self.modulation}')
-            self.health.add('AnalyzedModulationDepthValue', max(self.modulation))
+            # self.add_test_data(f'Adding : {max(self.modulation)}')
+            if not (len(self.modulation) == 1 and self.modulation[0] == 0):
+                self.health.add('AnalyzedModulationDepthValue', max(self.modulation))
             query_list.append(self.generate_insert(self.modulation, 'MOD'))
             self.modulation.clear()
 
@@ -89,6 +93,11 @@ class Transmission:
         self.execution += self.interval * 60
         self.execute_now = False
         return query_list
+
+    def add_test_data(self, message: str):
+        if self.radio.name.startswith('TBZ_'):
+            with open(f"export/{self.radio.name} Mod Data.txt", 'a') as f:
+                f.write(str(datetime.now())[:23] + ' | ' + message + '\n')
 
     def generate_insert(self, data, category):
         if len(data) <= 1:

@@ -96,7 +96,7 @@ class ManagerWindow(Thread):
         if border:
             self.hotkey = HotKeyWindow(3, self.cols - 2, self.lines - 4, 1, 'HotKey', self.color)
             self.status = StatusWindow(3, self.cols - 2, self.lines - 7, 1, 'Status', self.color)
-            self.table = TableWindow(y - 5, self.cols - 2, 1, 1, 'Table Box', self.color, self)
+            self.table = TableWindow(y - 5, self.cols - 4, 1, 1, 'Table Box', self.color, self)
         else:
             self.hotkey = HotKeyWindow(3, self.cols, self.lines - 3, 0, 'HotKey', self.color)
             self.status = StatusWindow(3, self.cols, self.lines - 6, 0, 'Status', self.color)

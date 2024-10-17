@@ -18,7 +18,11 @@ class StatGenerator:
             'SCSL': self.session,
 
         }
-        self.mip = self.health.radio.socket.getsockname()[0]
+        try:
+            self.mip = self.health.radio.socket.getsockname()[0]
+        except Exception as e:
+            self.health.log.exception(f'Error during read socket IP: {e}, {e.args}')
+            self.mip = ''
         TX = self.health.radio.radio.type == 'TX'
         self.bat = 'TXBatteryVoltage' if TX else 'RXBatteryVoltage'
         self.dcs = 'TXDCSectionVoltage' if TX else 'RXDCSectionVoltage'

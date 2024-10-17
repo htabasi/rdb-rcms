@@ -19,7 +19,9 @@ VALUES (1, 'Core', ''),
        (14, 'SettingsUpdate', ''),
        (15, 'SpecialUpdate', ''),
        (16, 'Optimum', ''),
-       (17, 'Manager', '');
+       (17, 'Manager', ''),
+       (18, 'Analyzer', '');
+
 GO
 
 INSERT INTO Application.RunningMode
@@ -79,3 +81,7 @@ VALUES (0, 1, 20, 30, 1, 1),
        (1, 9, 20, 50, 1, 1),
        (1, 10, 20, 50, 1, 1);
 GO
+
+INSERT INTO Application.StatusUpdater
+    (Part, FileLevel, StreamLevel, FileFormat, StreamFormat)
+VALUES ('Core', 20, 50, 1, 1)

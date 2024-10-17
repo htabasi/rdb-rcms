@@ -201,3 +201,12 @@ CREATE TABLE Application.ModuleStatus
     CntErrorUpdateTimer        BIGINT   NULL
 )
 
+CREATE TABLE Application.StatusUpdater
+(
+    id INT IDENTITY PRIMARY KEY,
+    Part VARCHAR(20) NOT NULL DEFAULT 'StatusUpdater',
+    FileLevel    TINYINT NOT NULL FOREIGN KEY REFERENCES Application.LogLevel (id),
+    StreamLevel  TINYINT NOT NULL FOREIGN KEY REFERENCES Application.LogLevel (id),
+    FileFormat   TINYINT NOT NULL FOREIGN KEY REFERENCES Application.LogFormat (id),
+    StreamFormat TINYINT NOT NULL FOREIGN KEY REFERENCES Application.LogFormat (id)
+)

@@ -15,6 +15,7 @@ from radio.comander import Commander
 from radio.optimum import OptimumGenerator
 from radio.planner import SettingsUpdatePlanner, SpecialSettingUpdatePlanner, TimerUpdatePlanner
 from radio.preparer import RadioPreparer
+from radio.queries import Queries
 from radio.status import Status
 
 _break = False
@@ -30,16 +31,16 @@ class Radio(Core):
     setting_planner: SettingsUpdatePlanner  # Include Timer Object
     special_planner: SpecialSettingUpdatePlanner  # Include Timer Object
     timer_planner: TimerUpdatePlanner  # Include Timer Object
+    queries: Queries
     portal: Queue
 
     def __init__(self, name, single_mode, portal=None):
         import os
-        from log.logger import get_db_loggers
-        from execute import get_logger_config, get_logger_format
 
         self.db_connection = get_connection()
+        self.queries = Queries(self.db_connection)
         self.radio = self.get_identity(name)
-        logs = get_db_loggers(self.radio.name, get_logger_config(single_mode), get_logger_format())
+        logs = self.get_logs(single_mode)
         super().__init__(self.radio, logs)
         self.preparer = RadioPreparer(self, self.logs['Preparer'])
         self.module_stat = Status(self, self.logs['Status'], self.preparer.module_status)
@@ -77,19 +78,34 @@ class Radio(Core):
         self.event_list_request = False
 
     def get_identity(self, name):
-        query = f"SELECT id, Name, Station, Frequency_No, Sector, RadioType, MainStandBy, IP " \
-                f"FROM RCMS.Radio.Radio WHERE Name='{name}';"
+        # query = f"-- SELECT id, Name, Station, Frequency_No, Sector, RadioType, MainStandBy, IP " \
+        #         f"FROM RCMS.Radio.Radio WHERE Name='{name}';"
+        query = self.queries.get('SIRRadio').format(name)
         answer = get_simple_row(self.db_connection, query)
         return RadioIdentity(*answer)
 
+    def get_logs(self, single_radio):
+        mode = {False: 1, True: 0}.get(single_radio)
+        from execute import get_multiple_row
+        _config = get_multiple_row(self.db_connection, self.queries.get('SALogConfig').format(mode), as_dict=True)
+        _format = get_multiple_row(self.db_connection, self.queries.get('SALogFormat'), as_dict=True)
+
+        from log.logger import get_db_loggers
+        return get_db_loggers(self.radio.name, _config, _format)
+
     def update_radio_status(self):
+        self.log.warning(f'UpdateRadioStatus: preparer.radio_status = {self.preparer.radio_status}')
         if self.preparer.radio_status is None:
-            self.executor.add(f"Insert Into Application.RadioStatus (Radio_Name, FirstConnection) "
-                              f"VALUES ('{self.radio.name}', '{str(datetime.utcnow())[:23]}');")
+            self.log.warning(f'UpdateRadioStatus: setting FirstConnection to {str(datetime.utcnow())}')
+            self.executor.add(self.queries.get('IARadioStatus').format(self.radio.name, str(datetime.utcnow())[:23]))
+                # f"Insert Into Application.RadioStatus (Radio_Name, FirstConnection) "
+                #               f"VALUES ('{self.radio.name}', '{str(datetime.utcnow())[:23]}');")
             self.event_list_request = True
         elif self.preparer.radio_status[3] is None:  # EventListCollect -> Is EventList is collected or not?
+            self.log.warning(f'UpdateRadioStatus: setting EventListCollect to True')
             self.event_list_request = True
         else:
+            self.log.warning(f'UpdateRadioStatus: setting EventListCollect to False')
             self.event_list_request = False
 
     def event_on_connect(self, time_tag):
@@ -132,9 +148,14 @@ class Radio(Core):
         if self.radio.type == 'TX':
             self.generator.event_special.save_setting(self.preparer.special)
             self.special_planner.set_counters(self.preparer.counter[0], self.preparer.counter[1])
+        else:
+            if self.preparer.rssi_clusters:
+                self.analyzer.reception.set_centers(*self.preparer.rssi_clusters)
 
         self.health.create_parameters(*self.preparer.health_parameters)
-
+        self.update_radio_status()
+        if self.event_list_request:
+            self.setting_planner.collect_event_list()
         self.generator.start()
         self.commander.start()
         self.analyzer.start()

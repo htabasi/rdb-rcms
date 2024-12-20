@@ -1,7 +1,4 @@
-import os
-
 from generator.setting import Settings, SettingInserter
-from settings import SQL_INSERT_SETTING
 
 
 class RXConfiguration(Settings):
@@ -30,7 +27,7 @@ class RXConfiguration(Settings):
 
 class SRXConfigurationInserter(SettingInserter):
     def __init__(self, radio, log):
-        super().__init__(radio, log, os.path.join(SQL_INSERT_SETTING, 'rx_configuration.sql'))
+        super().__init__(radio, log, query_code='ISRXConfiguration')
 
     def create_setting(self):
         return RXConfiguration(self.radio.radio_code, self.insert)

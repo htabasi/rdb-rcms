@@ -1,16 +1,16 @@
 import os
 import queue
 import signal
-from datetime import datetime
+from datetime import datetime, UTC
 from multiprocessing import Process, Queue
 from platform import system
 from sys import argv
 from time import sleep, time
 
 from controller.controller import Controller
-from execute import get_connection, get_file, get_simple_column, get_available_stations
+from execute import get_connection, get_simple_column, get_available_stations
+from radio.queries import Queries
 from radio.radio import run
-from settings import SQL_SELECT
 from window import CRIT, ERROR, WARN, INFO, SUCCESS
 from window.manager import ManagerWindow
 from window.presenter import Row
@@ -31,7 +31,7 @@ class RadioModule:
         self.first_announce = True
         self.prev_alive_counter = None
         self.status = {
-            'UpdateTime': datetime.utcnow(),
+            'UpdateTime': datetime.now(UTC),
             'Alive': False,
             'RadioConnection': False,
             'DBStatus': False
@@ -43,7 +43,7 @@ class RadioModule:
         # self.file = open(f'export/test_{name}.log', 'w')
 
     def send_message(self, level, category, sender, message):
-        dt = datetime.utcnow()
+        dt = datetime.now(UTC)
         self.interface.add_message(Row(level, category, sender, message, dt))
 
     def create_process(self):
@@ -175,6 +175,7 @@ class Manager:
             return
 
         self.radio_names = self.get_radio_names(stations)
+        self.connection.close()
         self.send_message(SUCCESS, 'Manager', 'Manager', "All radio names Loaded successfully")
         self.window.set_modules(self.radio_names)
         self.radio_modules = {}
@@ -186,18 +187,19 @@ class Manager:
         # self.start_group_commander()
 
     def send_message(self, level, category, sender, message):
-        dt = datetime.utcnow()
+        dt = datetime.now(UTC)
         self.window.add_message(Row(level, category, sender, message, dt))
 
     def get_radio_names(self, stations):
-        simple_station_query = get_file(os.path.join(SQL_SELECT, 'radio_simple_station.sql'))
-        multiple_station_query = get_file(os.path.join(SQL_SELECT, 'radio_multiple_station.sql'))
+        queries = Queries(self.connection)
+        simple_station_query = queries.get('SSRRadio')
+        multiple_station_query = queries.get('SMRRadio')
 
         if len(stations) == 1 and stations[0] != 'ALL':
             _radio_names = get_simple_column(self.connection, simple_station_query.format(stations[0]))
         else:
             if stations[0] == 'ALL':
-                stations = get_available_stations()
+                stations = get_available_stations(queries)
             _radio_names = get_simple_column(self.connection, multiple_station_query.format(tuple(stations)))
         return _radio_names
 

@@ -1,8 +1,6 @@
-import os
 from datetime import datetime
 
 from generator.setting import Settings, SettingInserter, RX
-from settings import SQL_INSERT_SETTING
 
 
 class Status(Settings):
@@ -55,7 +53,7 @@ class Status(Settings):
 
 class SStatusInserter(SettingInserter):
     def __init__(self, radio, log):
-        super().__init__(radio, log, os.path.join(SQL_INSERT_SETTING, 'status.sql'))
+        super().__init__(radio, log, query_code='ISStatus')
         self.ignore_equality = True
 
     def create_setting(self):

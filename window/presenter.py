@@ -1,5 +1,5 @@
 import unicurses as uc
-from datetime import datetime
+from datetime import datetime, UTC
 from .color import Colors
 
 
@@ -8,7 +8,7 @@ class Row:
 
     def __init__(self, level, category, sender, message, date=None, utctime=False):
         if date is None:
-            self.date = datetime.utcnow() if utctime else datetime.now()
+            self.date = datetime.now(UTC) if utctime else datetime.now()
         else:
             self.date = date
 

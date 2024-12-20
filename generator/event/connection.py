@@ -1,7 +1,4 @@
-import os
-
 from generator.inserter import InserterGenerator
-from settings import SQL_INSERT_EVENT
 
 
 class EConnectionInserter(InserterGenerator):
@@ -17,6 +14,4 @@ class EConnectionInserter(InserterGenerator):
     """
 
     def __init__(self, radio, log):
-        acceptable_keys = ['Connection']
-        path = os.path.join(SQL_INSERT_EVENT, 'connection.sql')
-        super().__init__(radio, path, acceptable_keys=acceptable_keys, log=log)
+        super().__init__(radio, query_code='IEEConnection', acceptable_keys=['Connection'], log=log)

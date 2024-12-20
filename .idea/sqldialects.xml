@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/../../Desktop/FrequencyStatus.sql" dialect="TSQL" />
-    <file url="file://$PROJECT_DIR$/../../Desktop/RCMS_HealthMonitor_RadioStatus.sql" dialect="TSQL" />
-    <file url="file://$PROJECT_DIR$/../../Desktop/Timer.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/sql/Database Creation/05_Application.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/sql/Database Creation/09_Analyze_Attachment.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/sql/Database Creation/100_HealthMonitor.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/sql/Database Creation/101_Attachment2.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/sql/Database Creation/101_Attachment3.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/sql/Database Creation/101_Attachment_add_parameter_key.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/sql/Database Creation/102_HealthMonitor_Procedures.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/sql/Database Creation/104_Add_New_Station_Procedures.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/sql/Database Creation/15_1_Fill_Application.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/sql/Database Creation/15_Fill_Application.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/sql/prepare/setting/access.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/sql/prepare/setting/cbit.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/sql/prepare/setting/inventory.sql" dialect="TSQL" />
   </component>
 </project>

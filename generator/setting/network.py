@@ -1,7 +1,4 @@
-import os
-
 from generator.setting import Settings, StrGroup, SettingInserter
-from settings import SQL_INSERT_SETTING
 
 
 class Network(Settings):
@@ -60,7 +57,7 @@ class Network(Settings):
 
 class SNetworkInserter(SettingInserter):
     def __init__(self, radio, log):
-        super().__init__(radio, log, os.path.join(SQL_INSERT_SETTING, 'network.sql'))
+        super().__init__(radio, log, query_code='ISNetwork')
 
     def create_setting(self):
         return Network(self.radio.radio_code, self.insert)

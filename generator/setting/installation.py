@@ -1,7 +1,4 @@
-import os
-
 from generator.setting import Settings, SettingInserter, StrGroup
-from settings import SQL_INSERT_SETTING
 
 
 class Installation(Settings):
@@ -56,8 +53,7 @@ class Installation(Settings):
 
 class SInstallationInserter(SettingInserter):
     def __init__(self, radio, log):
-
-        super().__init__(radio, log, os.path.join(SQL_INSERT_SETTING, 'installation.sql'))
+        super().__init__(radio, log, query_code='ISInstallation')
 
     def create_setting(self):
         return Installation(self.radio.radio_code, self.insert)

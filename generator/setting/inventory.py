@@ -79,9 +79,9 @@ class Inventory:
 
 class SInventoryInserter:
     def __init__(self, radio, log):
-        self.radio = radio
+        self.radio = radio.radio
         self.acceptable_keys = ['GRND']
-        self.insert = get_file(os.path.join(SQL_INSERT_SETTING, 'inventory.sql'))
+        self.insert = radio.queries.get('ISInventory')
         p = self.insert.index('VALUES') + 7
         self.statement, self.values = self.insert[:p], self.insert[p:-1]
         self.db_inventory = None

@@ -1,8 +1,4 @@
-import os
-
 from analyzer.updater import get_updates
-from generator import get_file
-from settings import SQL_OPTIMUM
 
 
 class OptimumGenerator:
@@ -14,7 +10,7 @@ class OptimumGenerator:
             self.root.connect_counter,
             self.root.disconnect_counter,
             self.root.executor.exe_query,
-            self.root.timer_planner.pln_counter,
+            #self.root.timer_planner.pln_counter,
             self.root.err_connect,
             self.root.executor.err_execute,
             self.root.timer_planner.err_counter
@@ -25,11 +21,11 @@ class OptimumGenerator:
         ]
 
         self.name = self.root.radio.name
-        self.module = get_file(os.path.join(SQL_OPTIMUM, 'module.sql'))
-        self.counter_update = get_file(os.path.join(SQL_OPTIMUM, 'counter.sql'))
-        self.timer_update = get_file(os.path.join(SQL_OPTIMUM, 'timer.sql'))
-        self.connection = get_file(os.path.join(SQL_OPTIMUM, 'connection.sql'))
-        self.connection_stat = get_file(os.path.join(SQL_OPTIMUM, 'connection_stat.sql'))
+        self.module = parent.queries.get('UOAModuleStatus')
+        self.counter_update = parent.queries.get('UOACounter')
+        self.timer_update = parent.queries.get('UOATimer')
+        self.connection = parent.queries.get('IOEEConnection')
+        self.connection_stat = parent.queries.get('MOHRadioStatus')
         self.disconnection_updated = False
 
     def update_module_stat(self, *args):

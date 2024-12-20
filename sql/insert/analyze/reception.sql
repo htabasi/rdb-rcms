@@ -1,0 +1,1 @@
+INSERT INTO Analyze.Reception (Radio_Name, Date, {}) VALUES ('{}', '{}', {});

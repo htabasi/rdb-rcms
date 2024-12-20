@@ -1,8 +1,4 @@
-import os
-
-from generator import get_file
 from generator.inserter import InserterGenerator
-from settings import SQL_INSERT_SETTING
 
 
 class CBITSettings:
@@ -95,10 +91,8 @@ class SCBITInserter(InserterGenerator):
 
     def __init__(self, radio, log):
         acceptable_keys = ['GRNC']
-        super(SCBITInserter, self).__init__(radio, log=log,
-                                            insert_query_file=os.path.join(SQL_INSERT_SETTING, 'cbit.sql'),
-                                            acceptable_keys=acceptable_keys)
-        self.cbit_list_insert = get_file(os.path.join(SQL_INSERT_SETTING, 'cbit_list.sql'))
+        super(SCBITInserter, self).__init__(radio, log=log, query_code='ISSCBIT', acceptable_keys=acceptable_keys)
+        self.cbit_list_insert = self.queries.get('ICCBITList')
         self.db_cbit_codes = []
         self.cbit_settings = CBITSettings(log)
 

@@ -1,1 +1,1 @@
-INSERT INTO Analyze.Transmission (Radio_Name, Date, [Count], [Length], {}) VALUES ('{}', '{}', {}, {}, {})
+INSERT INTO Analyze.Transmission (Radio_Name, Date, {}) VALUES ('{}', '{}', {})

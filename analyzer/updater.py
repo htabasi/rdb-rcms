@@ -15,8 +15,9 @@ class Updater:
     update: str
     reset_query: str
 
-    def __init__(self, root, log):
+    def __init__(self, root, queries, log):
         self.root = root
+        self.queries = queries
         self.log = log
         self.radio = self.root.radio
         self.reset_date = self.get_date()
@@ -119,7 +120,7 @@ class CounterUpdater(Updater):
             self.root.commander.cmd_executed,
             self.root.commander.cmd_rejected,
             self.root.setting_planner.pln_counter,
-            self.root.timer_planner.pln_counter,
+            #self.root.timer_planner.pln_counter,
             self.root.health.stat_update,
             self.root.reception.err_receive,
             self.root.reception.err_eval,
@@ -136,8 +137,8 @@ class CounterUpdater(Updater):
             self.gauges.extend([self.root.special_planner.pln_counter, self.root.special_planner.err_counter])
 
         self.category = {'Counter'}
-        self.update = get_file(os.path.join(SQL_ANALYZE_UPDATE, 'counter.sql'))
-        self.reset_query = get_file(os.path.join(SQL_ANALYZE_UPDATE, 'reset_counter.sql'))
+        self.update = self.queries.get('UACounter') # get_file(os.path.join(SQL_ANALYZE_UPDATE, 'counter.sql'))
+        self.reset_query = self.queries.get('URACounter') # get_file(os.path.join(SQL_ANALYZE_UPDATE, 'reset_counter.sql'))
 
 
 class TimerUpdater(Updater):
@@ -173,5 +174,5 @@ class TimerUpdater(Updater):
             self.root.operating_hour
         ]
         self.category = {'Timer'}
-        self.update = get_file(os.path.join(SQL_ANALYZE_UPDATE, 'timer.sql'))
-        self.reset_query = get_file(os.path.join(SQL_ANALYZE_UPDATE, 'reset_timer.sql'))
+        self.update = self.queries.get('UATimer') # get_file(os.path.join(SQL_ANALYZE_UPDATE, 'timer.sql'))
+        self.reset_query = self.queries.get('URATimer') # get_file(os.path.join(SQL_ANALYZE_UPDATE, 'reset_timer.sql'))

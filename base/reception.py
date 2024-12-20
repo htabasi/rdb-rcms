@@ -1,5 +1,5 @@
 from threading import Thread
-from datetime import datetime
+from datetime import datetime, UTC
 
 from base.aggregator import Aggregator
 
@@ -62,7 +62,7 @@ class BaseReception(Thread):
         try:
             self.log.debug('Receive from socket.')
             data = self.base.socket.recv(1460).decode()
-            time_tag = datetime.utcnow()
+            time_tag = datetime.now(UTC)
             self.rec_packet.add()
             self.alive_counter += 1
             self.log.debug(f'Packet Received. packet_len = {len(data)}')

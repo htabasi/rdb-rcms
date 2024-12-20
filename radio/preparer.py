@@ -1,9 +1,4 @@
-import os
-
 from execute import get_simple_row, get_multiple_row, get_simple_column, execute_no_answer_query
-from generator import get_file
-from settings import SQL_PREPARE, SQL_PREPARE_APPLICATION, SQL_PREPARE_EVENT, SQL_PREPARE_SETTING, SQL_PREPARE_ANALYZE, \
-    SQL_PREPARE_HEALTH
 
 
 class RadioPreparer:
@@ -13,72 +8,71 @@ class RadioPreparer:
         self.name = parent.radio.name
         self.id = parent.radio.id
         self.code = parent.radio.radio_code
+        self.queries = parent.queries
 
         self.log.info('Radio Preparer initialized')
 
-        self.application = self.simple_row(SQL_PREPARE_APPLICATION, 'configuration.sql', (), as_dict=True)
-        self.radio_status = self.simple_row(SQL_PREPARE_APPLICATION, 'radio_status.sql', (self.name,))
-        self.module_status = self.simple_row(SQL_PREPARE_APPLICATION, 'module_status.sql', (self.name,),
-                                             as_dict=True)
+        self.application = self.simple_row('SAConfiguration', (), as_dict=True)
+        self.radio_status = self.simple_row('SARadioStatus', (self.name,))
+        self.module_status = self.simple_row('SAModuleStatus', (self.name,), as_dict=True)
 
-        self.counter = self.get_timer_counter('counter.sql')
-        self.timer = self.get_timer_counter('timer.sql')
+        self.counter = self.get_timer_counter('SACounter', 'IACounter')
+        self.timer = self.get_timer_counter('SATimer', 'IATimer')
+        self.log.debug(f'Timer: {self.timer}')
 
-        self.access = self.simple_row(SQL_PREPARE_SETTING, 'access.sql', (self.name,))
-        self.cbit = self.simple_row(SQL_PREPARE_SETTING, 'cbit.sql', (self.name,))
-        self.configuration = self.simple_row(SQL_PREPARE_SETTING, 'configuration.sql', (self.name,), as_dict=True)
-        self.installation = self.simple_row(SQL_PREPARE_SETTING, 'installation.sql', (self.name,), as_dict=True)
-        self.inventory = self.multiple_row(SQL_PREPARE_SETTING, 'inventory.sql', (self.name,))
-        self.first_ip = self.simple_row(SQL_PREPARE_SETTING, 'ip.sql', (self.name, 0))
-        self.second_ip = self.simple_row(SQL_PREPARE_SETTING, 'ip.sql', (self.name, 1))
-        self.network = self.simple_row(SQL_PREPARE_SETTING, 'network.sql', (self.name,), as_dict=True)
-        self.snmp = self.simple_row(SQL_PREPARE_SETTING, 'snmp.sql', (self.name,), as_dict=True)
-        self.software = self.multiple_row(SQL_PREPARE_SETTING, 'software.sql', (self.name,))
-        self.status = self.simple_row(SQL_PREPARE_SETTING, 'status.sql', (self.name,), as_dict=True)
+        self.access = self.simple_row('SSAccess', (self.name,))
+        self.cbit = self.simple_row('SSSCBIT', (self.name,))
+        self.configuration = self.simple_row('SSConfiguration', (self.name,), as_dict=True)
+        self.installation = self.simple_row('SSInstallation', (self.name,), as_dict=True)
+        self.inventory = self.multiple_row('SSInventory', (self.name,))
+        self.first_ip = self.simple_row('SSIP', (self.name, 0))
+        self.second_ip = self.simple_row('SSIP', (self.name, 1))
+        self.network = self.simple_row('SSNetwork', (self.name,), as_dict=True)
+        self.snmp = self.simple_row('SSSNMP', (self.name,), as_dict=True)
+        self.software = self.multiple_row('SSSoftware', (self.name,))
+        self.status = self.simple_row('SSStatus', (self.name,), as_dict=True)
 
-        query = get_file(os.path.join(SQL_PREPARE_HEALTH, 'clear_radio_status.sql')).format(self.name)
+        query = self.queries.get('DHRadioStatus').format(self.name)
         execute_no_answer_query(self.connection, query, self.log)
         self.health_parameters = (
-            self.multiple_row(SQL_PREPARE_HEALTH, 'fixed_value.sql', (self.name,), as_dict = True),
-            self.multiple_row(SQL_PREPARE_HEALTH, 'multi_level.sql', (self.name,), as_dict=True),
-            self.multiple_row(SQL_PREPARE_HEALTH, 'range.sql', (self.name,), as_dict=True),
-            self.multiple_row(SQL_PREPARE_HEALTH, 'equal_string.sql', (self.name,), as_dict=True),
-            self.multiple_row(SQL_PREPARE_HEALTH, 'pattern_string.sql', (self.name,), as_dict=True)
+            self.multiple_row('SHFixedValue', (self.name,), as_dict=True),
+            self.multiple_row('SHMultiLevel', (self.name,), as_dict=True),
+            self.multiple_row('SHRange', (self.name,), as_dict=True),
+            self.multiple_row('SHEqualString', (self.name,), as_dict = True),
+            self.multiple_row('SHPatternString', (self.name,), as_dict=True),
         )
-        self.cbit_list = self.simple_column(SQL_PREPARE, 'cbit_list.sql', ())
-        parent.initial_commands = self.multiple_row(SQL_PREPARE, 'initial.sql', (self.code,))
+        self.cbit_list = self.simple_column('SCCBITList', ())
+        parent.initial_commands = self.multiple_row('SCRadioInitial', (self.code,))
         if parent.radio.type == 'RX':
-            self.trx_configuration = self.simple_row(SQL_PREPARE_SETTING, 'rx_configuration.sql',
-                                                     (self.name,), as_dict=True)
+            self.trx_configuration = self.simple_row('SSRXConfiguration', (self.name,), as_dict=True)
+            self.rssi_clusters = self.simple_row('SARSSIClusters', (self.name,))
         else:
-            self.special = self.simple_row(SQL_PREPARE_EVENT, 'special.sql', (self.name,), as_dict=True)
-            self.trx_configuration = self.simple_row(SQL_PREPARE_SETTING, 'tx_configuration.sql',
-                                                     (self.name,), as_dict=True)
+            self.special = self.simple_row('SESpecialSetting', (self.name,), as_dict=True)
+            self.trx_configuration = self.simple_row('SSTXConfiguration', (self.name,), as_dict=True)
 
         self.log.debug(f'Radio Preparer initialized: Status={self.module_status}')
 
-    def get_timer_counter(self, filename):
-        answer = self.multiple_row(SQL_PREPARE_ANALYZE, filename, (self.name,), as_dict=True)
-        if answer is None:
-            self.prepare_timer_counter(self.name, filename)
-            answer = self.multiple_row(SQL_PREPARE_ANALYZE, filename, (self.name,), as_dict=True)
+    def get_timer_counter(self, select_code, insert_code):
+        answer = self.multiple_row(select_code, (self.name,), as_dict=True)
+        if answer is None or len(answer) == 0:
+            self.prepare_timer_counter(insert_code, self.name)
+            answer = self.multiple_row(select_code, (self.name,), as_dict=True)
         return {row['RecordType']: row for row in answer}
 
-    def prepare_timer_counter(self, name, filename):
-        from settings import SQL_INSERT_ANALYZE
-        query = get_file(os.path.join(SQL_INSERT_ANALYZE, filename)).format(name)
+    def prepare_timer_counter(self, query_code, name):
+        query = self.queries.get(query_code).format(name)
         execute_no_answer_query(self.connection, query, self.log)
 
-    def simple_row(self, folder, file, args, as_dict=False):
-        query = get_file(os.path.join(folder, file)).format(*args)
+    def simple_row(self, query_code, args, as_dict=False):
+        query = self.queries.get(query_code).format(*args)
         return get_simple_row(self.connection, query, self.log, as_dict=as_dict)
 
-    def multiple_row(self, folder, file, args, as_dict=False):
-        query = get_file(os.path.join(folder, file)).format(*args)
+    def multiple_row(self, query_code, args, as_dict=False):
+        query = self.queries.get(query_code).format(*args)
         return get_multiple_row(self.connection, query, self.log, as_dict=as_dict)
 
-    def simple_column(self, folder, file, args):
-        query = get_file(os.path.join(folder, file)).format(*args)
+    def simple_column(self, query_code, args):
+        query = self.queries.get(query_code).format(*args)
         return get_simple_column(self.connection, query, self.log)
 
     # def scalar(self, file, args):

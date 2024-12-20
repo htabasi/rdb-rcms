@@ -1,7 +1,4 @@
-import os
-
 from generator.inserter import InserterGenerator
-from settings import SQL_INSERT_VARIATION
 
 
 class VReceptionInserter(InserterGenerator):
@@ -20,11 +17,10 @@ class VReceptionInserter(InserterGenerator):
 
     def __init__(self, radio, log):
         acceptable_keys = ['FFRS', 'RCRI']
-        path = os.path.join(SQL_INSERT_VARIATION, 'reception.sql')
         super(VReceptionInserter, self).__init__(radio, log=log,
-                                         insert_query_file=path,
-                                         special_key=['FFRS', 'RCMV', 'RCRI', 'RCTP'],
-                                         acceptable_keys=acceptable_keys)
+                                                 query_code='IVReception',
+                                                 special_key=['FFRS', 'RCMV', 'RCRI', 'RCTP'],
+                                                 acceptable_keys=acceptable_keys)
         self.prev_sq_stat, self.prev_time = None, None
         self.cum_sq = 0
 

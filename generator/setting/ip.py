@@ -1,9 +1,3 @@
-import os
-
-from generator import get_file
-from settings import SQL_INSERT_SETTING
-
-
 class IP:
     def __init__(self, radio_answer=None, db_answer=None, ip=None, subnet=None, gateway=None):
         if radio_answer is not None:
@@ -25,8 +19,8 @@ class IP:
 
 class SIPInserter:
     def __init__(self, radio, log):
-        self.radio = radio
-        self.insert = get_file(os.path.join(SQL_INSERT_SETTING, 'ip.sql'))
+        self.radio = radio.radio
+        self.insert = radio.queries.get('ISIP')
         self.acceptable_keys = ['GRII', 'GRIP']
         self.ip_type = {'GRIP': 0, 'GRII': 1}
         self.first, self.second = None, None

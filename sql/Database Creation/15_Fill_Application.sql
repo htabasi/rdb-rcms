@@ -84,4 +84,11 @@ GO
 
 INSERT INTO Application.StatusUpdater
     (Part, FileLevel, StreamLevel, FileFormat, StreamFormat)
-VALUES ('Core', 20, 50, 1, 1)
+VALUES ('Core', 20, 50, 1, 1);
+GO
+
+INSERT INTO Application.Queries
+    (code, query)
+VALUES ('Analyze_Select_Reset', 'SELECT ResetCounter, ResetTimer From Analyze.ResetCommand WHERE Radio_Name=''{}'';')
+
+INSERT INTO Application.Queries     (code, query) VALUES ('DHRadioStatus', '');

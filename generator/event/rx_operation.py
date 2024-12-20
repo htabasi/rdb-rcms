@@ -1,7 +1,4 @@
-import os
-
 from generator.inserter import InserterGenerator
-from settings import SQL_INSERT_EVENT
 
 
 class ERXOperationInserter(InserterGenerator):
@@ -21,8 +18,7 @@ class ERXOperationInserter(InserterGenerator):
 
     def __init__(self, radio, log):
         acceptable_keys = ['FFSN', 'FFSQ', 'FFSR', 'RIRC']
-        path = os.path.join(SQL_INSERT_EVENT, 'rx_operation.sql')
-        super(ERXOperationInserter, self).__init__(radio, log=log, insert_query_file=path,
+        super(ERXOperationInserter, self).__init__(radio, log=log, query_code='IERXOperation',
                                                    acceptable_keys=acceptable_keys, special_key=['RIRC'])
 
     def generate_special(self, time_tag, key, value):

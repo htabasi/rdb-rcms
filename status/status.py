@@ -1,4 +1,3 @@
-import os
 import pickle
 import signal
 from datetime import datetime
@@ -7,10 +6,9 @@ from time import sleep, time
 
 import pandas as pd
 
-from execute import get_connection, get_logger_format, get_multiple_row
-from generator import get_file
+from execute import get_connection, get_multiple_row
 from log.logger import get_db_loggers
-from settings import SQL_SELECT, LOG_DIR
+from radio.queries import Queries
 from status.frequency import Frequency
 from status.group import Station, Sector
 
@@ -18,10 +16,15 @@ from status.group import Station, Sector
 class StatusUpdater:
     def __init__(self):
         self.connection = get_connection()
-        log_config = get_multiple_row(self.connection,
-                                      get_file(os.path.join(SQL_SELECT, 'status_log_config.sql')),
-                                      as_dict=True)
-        self.logs = get_db_loggers('StatusUpdater', log_config, get_logger_format())
+        queries = Queries(self.connection)
+        log_config = get_multiple_row(self.connection, queries.get('SAStatusUpdater'), as_dict=True)
+        log_format = get_multiple_row(self.connection, queries.get('SALogFormat'), as_dict=True)
+
+        self.radio_query = queries.get('SFRRadio')
+        self.freq_query = queries.get('MHFrequencyStatus')
+        self.freq_param_query = queries.get('SHFrequencyParameters')
+        self.radio_status_query = queries.get('SHRadioStatus')
+        self.logs = get_db_loggers('StatusUpdater', log_config, log_format)
         self.log = self.logs['Core']
         self.stations, self.sectors = {}, {}
 
@@ -68,8 +71,7 @@ class StatusUpdater:
     def reload_frequencies(self):
         # st = time()
         self.log.info('Reloading frequencies')
-        radios = get_multiple_row(self.connection,
-                                  "SELECT Name, Station, Frequency_No, Sector FROM Radio.Radio", as_dict=True)
+        radios = get_multiple_row(self.connection, self.radio_query, as_dict=True)
         frequencies = {}
 
         for radio in radios:
@@ -77,11 +79,11 @@ class StatusUpdater:
                 if radio['Frequency_No'] not in frequencies[radio['Station']]:
                     frequencies[radio['Station']][radio['Frequency_No']] = Frequency(self.log, radio['Station'],
                                                                                      radio['Frequency_No'],
-                                                                                     radio['Sector'])
+                                                                                     radio['Sector'], self.freq_query)
             else:
                 frequencies[radio['Station']] = {
                     radio['Frequency_No']: Frequency(self.log, radio['Station'], radio['Frequency_No'],
-                                                     radio['Sector'])}
+                                                     radio['Sector'], self.freq_query)}
 
             frequencies[radio['Station']][radio['Frequency_No']].add_radio(radio['Name'])
 
@@ -102,8 +104,7 @@ class StatusUpdater:
     def reload_parameters(self):
         # st = time()
         self.log.info('Reloading parameters')
-        query = get_file(os.path.join(SQL_SELECT, 'frequency_parameters.sql'))
-        fp = get_multiple_row(self.connection, query, as_dict=True)
+        fp = get_multiple_row(self.connection, self.freq_param_query, as_dict=True)
 
         df = pd.DataFrame(fp)
         columns_to_convert = ['Frequency_No', 'TXM', 'TXS', 'RXM', 'RXS', 'Level']
@@ -118,8 +119,7 @@ class StatusUpdater:
     def update_statuses(self):
         # st = time()
         self.log.info('Updating statuses')
-        query = get_file(os.path.join(SQL_SELECT, 'radio_status.sql'))
-        updated_stats = get_multiple_row(self.connection, query, as_dict=True)
+        updated_stats = get_multiple_row(self.connection, self.radio_status_query, as_dict=True)
         self.log.info('All Status Fetched')
         # t1, st = time() - st, time()
 

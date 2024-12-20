@@ -40,12 +40,11 @@ class Status:
         connection = self.radio.db_connection
         now = str(datetime.utcnow())[:23]
         if self.status['id'] is None:
-            query = get_file(os.path.join(SQL_INSERT, 'module_status.sql')).format(self.name, now, pid, now)
+            query = self.radio.queries.get('IAModuleStatus').format(self.name, now, pid, now)
             connection.execute_non_query(query)
             self.status['id'] = connection.identity
         else:
-            path = os.path.join(SQL_UPDATE, 'module_status_start.sql')
-            query = get_file(path).format(now, now, pid, self.status['id'])
+            query = self.radio.queries.get('USAModuleStatus').format(now, now, pid, self.status['id'])
             connection.execute_non_query(query)
 
         self.status['StartTime'] = now

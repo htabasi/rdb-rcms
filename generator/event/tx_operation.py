@@ -1,7 +1,4 @@
-import os
-
 from generator.inserter import InserterGenerator
-from settings import SQL_INSERT_EVENT
 
 
 class ETXOperationInserter(InserterGenerator):
@@ -17,7 +14,4 @@ class ETXOperationInserter(InserterGenerator):
     """
 
     def __init__(self, radio, log):
-        acceptable_keys = ['RCMG']
-        path = os.path.join(SQL_INSERT_EVENT, 'tx_operation.sql')
-        super(ETXOperationInserter, self).__init__(radio, log=log, insert_query_file=path,
-                                                   acceptable_keys=acceptable_keys)
+        super(ETXOperationInserter, self).__init__(radio, log=log, query_code='IETXOperation', acceptable_keys=['RCMG'])

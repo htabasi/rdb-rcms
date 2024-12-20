@@ -1,8 +1,3 @@
-import os
-
-from generator import get_file
-from settings import SQL_INSERT_SETTING
-
 RX, TX = 0, 1
 
 
@@ -114,9 +109,10 @@ class Settings:
 
 
 class SettingInserter:
-    def __init__(self, radio, log, file):
-        self.radio = radio
-        self.insert = get_file(file)
+    def __init__(self, radio, log, query_code):
+        self.radio = radio.radio
+        self.queries = radio.queries
+        self.insert = self.queries.get(query_code)
         self.db_setting = None
         self.setting = self.create_setting()
         self.acceptable_keys = self.setting.keys
@@ -188,7 +184,7 @@ class SSpecialSettingInserter(SettingInserter):
     """
 
     def __init__(self, radio, log):
-        super().__init__(radio, log, os.path.join(SQL_INSERT_SETTING, 'special_setting.sql'))
+        super().__init__(radio, log, query_code='IESpecialSetting')
 
     def create_setting(self):
         return Settings(self.radio.radio_code, self.insert)

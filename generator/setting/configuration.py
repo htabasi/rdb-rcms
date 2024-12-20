@@ -1,7 +1,4 @@
-import os
-
 from generator.setting import Settings, SettingInserter, IntGroup, TupleGroup
-from settings import SQL_INSERT_SETTING
 
 
 class Configuration(Settings):
@@ -69,7 +66,7 @@ class Configuration(Settings):
 
 class SConfigurationInserter(SettingInserter):
     def __init__(self, radio, log):
-        super().__init__(radio, log, os.path.join(SQL_INSERT_SETTING, 'configuration.sql'))
+        super().__init__(radio, log, query_code='ISConfiguration')
 
     def create_setting(self):
         return Configuration(self.radio.radio_code, self.insert)

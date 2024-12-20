@@ -6,9 +6,10 @@ class InserterGenerator:
     Base class For Generate SQL Statements
     """
 
-    def __init__(self, radio, insert_query_file, acceptable_keys, log, special_key=None):
-        self.radio = radio
-        self.insert = get_file(insert_query_file)
+    def __init__(self, radio, query_code, acceptable_keys, log, special_key=None):
+        self.radio = radio.radio
+        self.queries = radio.queries
+        self.insert = self.queries.get(query_code)
         self.acceptable_keys = acceptable_keys
         if special_key is None:
             self.special_key = []

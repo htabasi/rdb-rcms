@@ -210,3 +210,10 @@ CREATE TABLE Application.StatusUpdater
     FileFormat   TINYINT NOT NULL FOREIGN KEY REFERENCES Application.LogFormat (id),
     StreamFormat TINYINT NOT NULL FOREIGN KEY REFERENCES Application.LogFormat (id)
 )
+
+CREATE TABLE Application.Queries
+(
+    id INT IDENTITY PRIMARY KEY,
+    code VARCHAR(50) NOT NULL,
+    query VARCHAR(8000) NOT NULL
+)

@@ -1,7 +1,4 @@
-import os
-
 from generator.inserter import InserterGenerator
-from settings import SQL_INSERT_EVENT
 
 
 class EStatusInserter(InserterGenerator):
@@ -17,9 +14,7 @@ class EStatusInserter(InserterGenerator):
     )
     """
     def __init__(self, radio, log):
-        acceptable_keys = ['GRDS']
-        path = os.path.join(SQL_INSERT_EVENT, 'status.sql')
-        super().__init__(radio, path, special_key=['GRDS'], acceptable_keys=acceptable_keys, log=log)
+        super().__init__(radio, query_code='IEEStatus', special_key=['GRDS'], acceptable_keys=['GRDS'], log=log)
 
     def generate_special(self, time_tag, key, value):
         # self.log.debug(f"{self.__class__.__name__}: key={key}")

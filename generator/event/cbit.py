@@ -1,8 +1,5 @@
-import os
-
 from base.aggregator import Aggregator
 from generator.inserter import InserterGenerator
-from settings import SQL_INSERT_EVENT
 
 
 class ECBITInserter(InserterGenerator):
@@ -24,9 +21,7 @@ class ECBITInserter(InserterGenerator):
     """
 
     def __init__(self, radio, log):
-        path = os.path.join(SQL_INSERT_EVENT, 'cbit.sql')
-        super(ECBITInserter, self).__init__(radio, insert_query_file=path, log=log,
-                                            acceptable_keys=['GRCS'])
+        super(ECBITInserter, self).__init__(radio, query_code='IEECBIT', log=log, acceptable_keys=['GRCS'])
         self.no_cbit = (0, 'CBIT LIST IS CLEAR', 0)
         self.cbit_stat = 0
         self.warning_count = Aggregator('CntCBITWarning')

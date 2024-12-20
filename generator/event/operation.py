@@ -1,8 +1,4 @@
-import os
-
-from generator import get_file
 from generator.inserter import InserterGenerator
-from settings import SQL_INSERT_EVENT, SQL_UPDATE
 
 
 class EOperationInserter(InserterGenerator):
@@ -24,12 +20,11 @@ class EOperationInserter(InserterGenerator):
 
     def __init__(self, radio, log):
         acceptable_keys = ['ERGN', 'FFMD', 'FFSP', 'FFTR', 'MSAC', 'RCPP']
-        path = os.path.join(SQL_INSERT_EVENT, 'operation.sql')
-        super(EOperationInserter, self).__init__(radio, log=log, insert_query_file=path,
+        super(EOperationInserter, self).__init__(radio, log=log, query_code='IEEOperation',
                                                  acceptable_keys=acceptable_keys, special_key=['FFTR'])
-        self.update_frequency = get_file(os.path.join(SQL_UPDATE, 'update_frequency.sql'))
+        self.update_frequency_query = self.queries.get('URRadio')
 
     def generate_special(self, time_tag, key, value):
         # self.log.debug(f"{self.__class__.__name__}: key={key}")
         return ([self.insert.format(key, str(time_tag)[:23], self.radio.name, value)] +
-                [self.update_frequency.format(int(value) / 1000000, self.radio.name)])
+                [self.update_frequency_query.format(int(value) / 1000000, self.radio.name)])

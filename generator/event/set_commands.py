@@ -1,7 +1,4 @@
-import os
-
 from generator.inserter import InserterGenerator
-from settings import SQL_INSERT_EVENT
 
 
 class ESetCommandInserter(InserterGenerator):
@@ -21,8 +18,7 @@ class ESetCommandInserter(InserterGenerator):
 
     def __init__(self, radio, log):
         acceptable_keys = ['EVCL', 'UserFFSQ', 'GRAT', 'MSGO', 'RCPF', 'RCPT', 'RCRR']
-        path = os.path.join(SQL_INSERT_EVENT, 'set_command.sql')
-        super(ESetCommandInserter, self).__init__(radio, log=log, insert_query_file=path,
+        super(ESetCommandInserter, self).__init__(radio, log=log, query_code='IESetCommands',
                                                   acceptable_keys=acceptable_keys)
         '''
         EVCL: 0,Event List Cleared

@@ -1,7 +1,4 @@
-import os
-
 from generator.setting import SettingInserter, Settings
-from settings import SQL_INSERT_SETTING
 
 
 class TXConfiguration(Settings):
@@ -38,7 +35,7 @@ class TXConfiguration(Settings):
 
 class STXConfigurationInserter(SettingInserter):
     def __init__(self, radio, log):
-        super().__init__(radio, log, os.path.join(SQL_INSERT_SETTING, 'tx_configuration.sql'))
+        super().__init__(radio, log, query_code='ISTXConfiguration')
 
     def create_setting(self):
         return TXConfiguration(self.radio.radio_code, self.insert)

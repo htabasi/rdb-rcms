@@ -1,7 +1,4 @@
-import os
-
 from generator.inserter import InserterGenerator
-from settings import SQL_INSERT_VARIATION
 
 
 class VTransmissionInserter(InserterGenerator):
@@ -25,8 +22,7 @@ class VTransmissionInserter(InserterGenerator):
 
     def __init__(self, radio, log):
         acceptable_keys = ['RCMO', 'RCTC', 'RCTO', 'RCTV', 'RCTW', 'RCVV']
-        path = os.path.join(SQL_INSERT_VARIATION, 'transmission.sql')
-        super(VTransmissionInserter, self).__init__(radio, log=log, insert_query_file=path,
+        super(VTransmissionInserter, self).__init__(radio, log=log, query_code='IVTransmission',
                                                     special_key=['RCTC', 'RCTW'], acceptable_keys=acceptable_keys)
         self.cum_ptt = self.cum_swr = 0
         self.prev_ptt_stat, self.prev_ptt_time = None, None

@@ -1,9 +1,3 @@
-import os
-
-from generator import get_file
-from settings import SQL_INSERT_SETTING
-
-
 class Partition:
     def __init__(self, version=None, part_number=None, db_answer=None):
         """
@@ -71,8 +65,8 @@ class Software:
 
 class SSoftwareInserter:
     def __init__(self, radio, log):
-        self.radio = radio
-        self.insert = get_file(os.path.join(SQL_INSERT_SETTING, 'software.sql'))
+        self.radio = radio.radio
+        self.insert = radio.queries.get('ISSoftware')
         self.acceptable_keys = ['GRSV']
         self.db_software = None
         self.log = log

@@ -60,9 +60,9 @@ class ModuleStatusUpdater:
         )
     """
 
-    def __init__(self, log):
+    def __init__(self, radio, log):
         self.acceptable_keys = ['ModuleStatus']
-        self.update = get_file(os.path.join(SQL_UPDATE, 'module_status.sql'))
+        self.update = radio.queries.get('UAModuleStatus')
         self.log = log
 
     def generate(self, *args):

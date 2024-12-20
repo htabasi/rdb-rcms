@@ -41,32 +41,16 @@ def get_radio_ip(radio_name):
     return answer
 
 
-def get_available_stations():
+def get_available_stations(queries):
     with get_connection() as connection:
-        result = get_simple_column(connection, get_file(os.path.join(SQL_SELECT, 'available_stations.sql')))
+        result = get_simple_column(connection, queries.get('SRStation'))
 
     return result
 
 
-def get_available_radios():
+def get_available_radios(queries):
     with get_connection() as connection:
-        result = get_simple_column(connection, get_file(os.path.join(SQL_SELECT, 'available_radios.sql')))
-
-    return result
-
-
-def get_logger_config(single_radio):
-    mode = {False: 1, True: 0}.get(single_radio)
-    with get_connection() as connection:
-        result = get_multiple_row(connection,
-                                  get_file(os.path.join(SQL_SELECT, 'log_config.sql')).format(mode), as_dict=True)
-
-    return result
-
-
-def get_logger_format():
-    with get_connection() as connection:
-        result = get_multiple_row(connection, get_file(os.path.join(SQL_SELECT, 'log_format.sql')), as_dict=True)
+        result = get_simple_column(connection, queries.get('SRStation'))
 
     return result
 

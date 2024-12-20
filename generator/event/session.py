@@ -1,7 +1,4 @@
-import os
-
 from generator.inserter import InserterGenerator
-from settings import SQL_INSERT_EVENT
 
 
 class ESessionInserter(InserterGenerator):
@@ -20,8 +17,7 @@ class ESessionInserter(InserterGenerator):
     """
 
     def __init__(self, radio, log):
-        path = os.path.join(SQL_INSERT_EVENT, 'session.sql')
-        super(ESessionInserter, self).__init__(radio, log=log, insert_query_file=path, acceptable_keys=['SCSL'])
+        super(ESessionInserter, self).__init__(radio, log=log, query_code='IESession', acceptable_keys=['SCSL'])
         self.session_threshold_warning = 3
 
     def set_warning_threshold(self, wt):

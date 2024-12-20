@@ -1,12 +1,9 @@
-import os
 from datetime import datetime
 from threading import Thread
 from time import sleep, time
 
 from base.aggregator import Aggregator
 from execute import get_connection, get_multiple_row, get_simple_row, execute_no_answer_query
-from generator import get_file
-from settings import SQL_SELECT, SQL_UPDATE, SQL_ANALYZE_SELECT, SQL_ANALYZE_UPDATE
 
 
 class Commander(Thread):
@@ -18,14 +15,12 @@ class Commander(Thread):
         super().__init__(name=f"{self.radio.name}_Commander", daemon=True)
         self.log = log
         self.core = parent
-        self.select = get_file(os.path.join(SQL_SELECT, 'command_history.sql')).format(self.radio.name)
-        self.update = get_file(os.path.join(SQL_UPDATE, 'command_history.sql'))
-        self.permission = get_file(os.path.join(SQL_SELECT, 'command_history_permission.sql'))
-        self.analyzer_reset = get_file(os.path.join(SQL_ANALYZE_SELECT, 'reset.sql')).format(self.radio.name)
-        self.analyzer_set_counter = get_file(os.path.join(SQL_ANALYZE_UPDATE,
-                                                          'reset_command_counter.sql')).format(self.radio.name)
-        self.analyzer_set_timer = get_file(os.path.join(SQL_ANALYZE_UPDATE,
-                                                        'reset_command_timer.sql')).format(self.radio.name)
+        self.select = parent.queries.get('SCHistory').format(self.radio.name)
+        self.update = parent.queries.get('UCHistory')
+        self.permission = parent.queries.get('SDUser')
+        self.analyzer_reset = parent.queries.get('SAResetCommand').format(self.radio.name)
+        self.analyzer_set_counter = parent.queries.get('UCAResetCommand').format(self.radio.name)
+        self.analyzer_set_timer = parent.queries.get('UTAResetCommand').format(self.radio.name)
         self.send_command = self.core.sender.send
         self.user_command_succeed = self.core.sender.coordinator.user_command_succeed
 

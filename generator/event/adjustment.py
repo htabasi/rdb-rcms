@@ -1,8 +1,6 @@
-import os
 from datetime import datetime
 
 from generator.inserter import InserterGenerator
-from settings import SQL_INSERT_EVENT
 
 
 class EAdjustmentInserter(InserterGenerator):
@@ -24,9 +22,8 @@ class EAdjustmentInserter(InserterGenerator):
 
     def __init__(self, radio, log):
         acceptable_keys = ['AIAD', 'AILA', 'AISL', 'GRME', 'GRUI', 'GRUO']
-        path = os.path.join(SQL_INSERT_EVENT, 'adjustment.sql')
         super(EAdjustmentInserter, self).__init__(radio, log=log,
-                                                  insert_query_file=path,
+                                                  query_code='IEEAdjustment',
                                                   acceptable_keys=acceptable_keys,
                                                   special_key=['GRME', 'GRUO'])
 

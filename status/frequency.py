@@ -9,7 +9,7 @@ from status.radio import RadioStatus
 
 
 class Frequency:
-    def __init__(self, log, station, freq_no, sector):
+    def __init__(self, log, station, freq_no, sector, query):
         self.log = log
         self.station = station
         self.freq_no = freq_no
@@ -19,7 +19,7 @@ class Frequency:
         self.status = {}
         self.rx = {}
         self.tx = {}
-        self.insert = get_file(os.path.join(SQL_INSERT_HEALTH, 'frequency_status.sql')).format(station, freq_no, sector)
+        self.insert = query.format(station, freq_no, sector)
         self.log.debug(f"{self.name} created")
 
     def add_radio(self, radio):

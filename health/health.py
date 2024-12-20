@@ -1,12 +1,9 @@
-import os
 from threading import Thread
 from time import sleep
 
 from base.aggregator import Aggregator
-from generator import get_file
 from health.generator import StatGenerator
 from health.parameters import FixedValue, PatternString, EqualString, MultiLevel, Range
-from settings import SQL_INSERT_HEALTH
 
 
 class HealthMonitor(Thread):
@@ -85,72 +82,8 @@ class HealthMonitor(Thread):
             'AnalyzedTXPowerValue', 'AnalyzedModulationDepthValue', 'AnalyzedVSWRValue', 'AnalyzedExternalVSWRVoltage',
         }
 
-        # self.key_code_convert = {
-        #     'FFEA': 'ACARSDataMode',
-        #     'MSAC': 'ActivationStatus',
-        #     'AIAI': 'AudioInterface',
-        #     'FFSP': 'ChannelSpacing',
-        #     'Connection': 'Connection',
-        #     'GRDH': 'DHCPEnabled',
-        #     'FFTR': 'Frequency',
-        #     'ERGN': 'GONOGOStatus',
-        #     'GRIV': 'IPv6Enabled',
-        #     'AIEL': 'LineInterfaceInLocalMode',
-        #     'FFLM': 'LocalMode',
-        #     'MSTY': 'MainStandbyType',
-        #     'FFMD': 'ModulationMode',
-        #     # '': 'MySessionType',
-        #     'GRNA': 'NTPSyncActive',
-        #     # '': 'OtherSessionType',
-        #     'RCPP': 'PresetPageNumber',
-        #     'GRIS': 'RxInputSensitivity',
-        #     'GRIE': 'SecondIPAddressEnabled',
-        #     'FFSC': 'SingleChannel',
-        #     'GRSE': 'SNMPEnable',
-        #     'FFCO': 'CarrierOverride',
-        #     'IRO': 'RSSIOutputType',
-        #     'AIGA': 'RxAudioAGC',
-        #     'FFSQ': 'SQCircuit',
-        #     'FFSL': 'SQLogicOperation',
-        #     'GRAS': 'ATRSwitchMode',
-        #     'FFTO': 'CarrierOffset',
-        #     'RIVP': 'EXTVSWRPolarity',
-        #     'RIPC': 'PTTInputConfiguration',
-        #     'AICA': 'TxAudioALC',
-        #     'RCIT': 'TXInhibition',
-        #     'RCTW': 'VSWRLED',
-        #     'AIAD': 'AudioDelay',
-        #     'AILA': 'AudioLevel',
-        #     'FFLT': 'LocalModeTimeout',
-        #     'GRLR': 'MeasureRXAudioLevel',
-        #     'FFSR': 'RSSISquelchThreshold',
-        #     'FFSN': 'SNRSquelchThreshold',
-        #     'RCVV': 'ExternalVSWRVoltage',
-        #     'RIVL': 'EXTVSWRlimit',
-        #     'GRLT': 'MeasureTXAudioLevel',
-        #     'RCMG': 'ModulationDepthSetting',
-        #     'RCMO': 'ModulationDepthValue',
-        #     'RCDP': 'PTTTimeout',
-        #     'RCLP': 'TxLowPowerLevel',
-        #     'RCTO': 'TXPowerValue',
-        #     'AITP': 'TxPreEmphasis',
-        #     'RCTV': 'VSWRValue',
-        #     'ERBE': 'BootErrorList',
-        #     'GRIP': 'IPAddress',
-        #     'GRII': 'SecondIPAddress',
-        #     'GRND': 'SerialNumber',
-        #     'GRSN': 'SNMPCommunityString',
-        #     'GRVE': 'GB2PPVersion',
-        #     'RUFL': 'FTPLogin',
-        #     'RUFP': 'FTPPassword',
-        #     'GRHN': 'Hostname',
-        #     'GRIN': 'InstallationInfo',
-        #     'GRNS': 'NTPServer',
-        #
-        # }
-
         self.stat_gen = StatGenerator(self)
-        self.insert = get_file(os.path.join(SQL_INSERT_HEALTH, 'radio_status.sql')).format(self.radio.radio.name)
+        self.insert = self.radio.queries.get('MHRadioStatus').format(self.radio.radio.name)
         self.acceptable_keys = set(list(self.key_code_convert.keys()) +
                                    list(self.stat_gen.key_list.keys())).union(self.codes)
         self.disabled_codes, self.disabled_keys = set(), set()
@@ -159,6 +92,11 @@ class HealthMonitor(Thread):
     def create_parameters(self, fixed_values, multi_levels, ranges, equal_strings, pattern_strings):
         ml_codes = {}
         rn_codes = {}
+        self.log.debug(f'FV Parameters {fixed_values}')
+        self.log.debug(f'ML Parameters {multi_levels}')
+        self.log.debug(f'RN Parameters {ranges}')
+        self.log.debug(f'ES Parameters {equal_strings}')
+        self.log.debug(f'PS Parameters {pattern_strings}')
         for data in multi_levels:
             self.log.debug(f'Range Parameter: {data}')
             if data['enable'] == 0:

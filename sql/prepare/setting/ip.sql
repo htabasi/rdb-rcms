@@ -1,1 +1,1 @@
-SELECT TOP 1 IP, Subnet, Gateway FROM Setting.IP WHERE Radio_Name = '{}' AND IP_Type='{}' ORDER BY Date DESC;
+SELECT IP, Subnet, Gateway FROM Final.FSIP WHERE Radio_Name = '{}' AND IP_Type='{}';

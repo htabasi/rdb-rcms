@@ -19,8 +19,8 @@ class Access:
 
 class SAccessInserter:
     def __init__(self, radio, log):
-        self.radio = radio
-        self.insert = get_file(os.path.join(SQL_INSERT_SETTING, 'access.sql'))
+        self.radio = radio.radio
+        self.insert = radio.queries.get('ISAccess')
         self.acceptable_keys = ['GRAC']
         self.db_access = None
         p = self.insert.index('VALUES') + 7

@@ -51,7 +51,7 @@ class BasePlanner:
     def run(self):
         if self.radio.radio.name.startswith('BRG_'):
             self.log.debug(f'Adding timer planner counter: self.pln_counter.agg={self.pln_counter.agg}')
-        self.pln_counter.add()
+        #self.pln_counter.add()
         self.log.info(f'Run Executed')
         self.is_scheduled = False
 

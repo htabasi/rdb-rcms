@@ -1,7 +1,4 @@
-import os
-
 from generator.setting import Settings, SettingInserter
-from settings import SQL_INSERT_SETTING
 
 
 class SNMP(Settings):
@@ -45,7 +42,7 @@ class SNMP(Settings):
 
 class SSNMPInserter(SettingInserter):
     def __init__(self, radio, log):
-        super().__init__(radio, log, os.path.join(SQL_INSERT_SETTING, 'snmp.sql'))
+        super().__init__(radio, log, query_code='ISSNMP')
 
     def create_setting(self):
         return SNMP(self.radio.radio_code, self.insert)

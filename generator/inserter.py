@@ -1,4 +1,3 @@
-from generator import get_file
 
 
 class InserterGenerator:
@@ -22,7 +21,7 @@ class InserterGenerator:
         if key in self.special_key:
             return self.generate_special(time_tag, key, value)
         else:
-            return [self.insert.format(key, str(time_tag)[:23], self.radio.name, value)]
+            return [self.insert.format(key, time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], self.radio.name, value)]
 
     def generate_special(self, time_tagg, key, value) -> list:
         return []

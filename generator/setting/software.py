@@ -81,7 +81,9 @@ class SSoftwareInserter:
         software = Software(radio_answer=value)
         if software != self.db_software:
             self.db_software = software
-            return [self.insert.format(str(time_tag)[:23], self.radio.name, software.db_insert(1),
-                                       str(time_tag)[:23], self.radio.name, software.db_insert(2))]
+            return [self.insert.format(time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], self.radio.name,
+                                       software.db_insert(1),
+                                       time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], self.radio.name,
+                                       software.db_insert(2))]
         else:
             return []

@@ -18,4 +18,5 @@ class EStatusInserter(InserterGenerator):
 
     def generate_special(self, time_tag, key, value):
         # self.log.debug(f"{self.__class__.__name__}: key={key}")
-        return [self.insert.format('Activation, Operation, Access', str(time_tag)[:23], self.radio.name, value[2:])]
+        return [self.insert.format('Activation, Operation, Access', time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3],
+                                   self.radio.name, value[2:])]

@@ -38,12 +38,12 @@ class ESetCommandInserter(InserterGenerator):
         key = key if key != 'UserFFSQ' else 'FFSQ'
         self.log.warning(f"{self.__class__.__name__}: {key}, {value}")
         uid, action, comment = value
-        return [self.insert.format(str(time_tag)[:23], self.radio.name, key, uid, action, comment)]
+        return [self.insert.format(time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], self.radio.name, key, uid, action, comment)]
     #
     # def generate_special(self, time_tag, key, value):
     #     # self.log.debug(f"{self.__class__.__name__}: key={key}")
     #     if key == 'FFTR':
-    #         return ([self.insert.format(key, str(time_tag)[:23], self.radio.name, value)] +
+    #         return ([self.insert.format(key, time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], self.radio.name, value)] +
     #                 [self.update_frequency.format(int(value) / 1000000, self.radio.name)])
     #     elif key in ['GRHN', 'GRTI']:
     #         value = value.replace('"', '')
@@ -68,4 +68,4 @@ class ESetCommandInserter(InserterGenerator):
     #     elif key == 'RCRR':
     #         value = 7
     #
-    #     return [self.insert.format(key, str(time_tag)[:23], self.radio.name, f"'{value}'")]
+    #     return [self.insert.format(key, time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], self.radio.name, f"'{value}'")]

@@ -112,7 +112,7 @@ class SInventoryInserter:
             # self.log.debug(f"{self.__class__.__name__}: db_inventory and new inventory are same is {self.inventory
             # == self.db_inventory} ")
             if self.inventory != self.db_inventory:
-                query_list = [self.inventory.db_insert(str(time_tag)[:23], self.radio.name)]
+                query_list = [self.inventory.db_insert(time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], self.radio.name)]
                 self.db_inventory = self.inventory
                 self.inventory = Inventory(self.statement)
                 self.log.debug(f"{self.__class__.__name__}: Query Generated")

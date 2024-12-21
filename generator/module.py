@@ -1,9 +1,3 @@
-import os
-
-from generator import get_file
-from settings import SQL_UPDATE
-
-
 class ModuleStatusUpdater:
     """
         CREATE TABLE Application.ModuleStatus
@@ -68,7 +62,7 @@ class ModuleStatusUpdater:
     def generate(self, *args):
         """args are: time_tag, key, value"""
         self.log.debug(f"{self.__class__.__name__}: Status Update generating")
-        kv, value = f"{'UpdateTime'}='{str(args[0])[:23]}', ", args[2]
+        kv, value = f"{'UpdateTime'}='{args[0].strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]}', ", args[2]
         for item in value:
             if item in ['id', 'Name', 'StartTime', 'UpdateTime', 'PID']:
                 continue

@@ -48,6 +48,7 @@ class SIPInserter:
                 self.first = ip
             else:
                 self.second = ip
-            return [self.insert.format(str(time_tag)[:23], self.radio.name, t, ip.ip, ip.subnet, ip.gateway)]
+            return [self.insert.format(time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], self.radio.name, t, ip.ip,
+                                       ip.subnet, ip.gateway)]
         else:
             return []

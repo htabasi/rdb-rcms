@@ -53,8 +53,8 @@ class VTransmissionInserter(InserterGenerator):
                 self.cum_ptt += on_duration
 
             self.prev_ptt_stat, self.prev_ptt_time = ptt_stat, ts
-            return [self.insert.format('PTT, PTT_ON, PTT_OFF, CUM_PTT', str(time_tag)[:23], self.radio.name,
-                                       f'{ptt_stat}, {on_duration}, {off_duration}, {self.cum_ptt}')]
+            return [self.insert.format('PTT, PTT_ON, PTT_OFF, CUM_PTT', time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3],
+                                       self.radio.name, f'{ptt_stat}, {on_duration}, {off_duration}, {self.cum_ptt}')]
 
     def generate_swr_statement(self, time_tag, swr_stat):
         ts = time_tag.timestamp()
@@ -71,5 +71,5 @@ class VTransmissionInserter(InserterGenerator):
                 self.cum_swr += ts - self.prev_swr_time
 
             self.prev_swr_stat, self.prev_swr_time = swr_stat, ts
-            return [self.insert.format('RCTW, CUM_SWR', str(time_tag)[:23], self.radio.name,
+            return [self.insert.format('RCTW, CUM_SWR', time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], self.radio.name,
                                        f'{swr_stat}, {self.cum_swr}')]

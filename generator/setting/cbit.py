@@ -136,5 +136,6 @@ class SCBITInserter(InserterGenerator):
         # for code in cbit_list:
         #     query += self.cbit_list_insert.format(*cbit_list[code])
 
-        return [self.insert.format(str(time_tag)[:23], self.radio.name, *r) for r in cbit_setting] + \
+        return [self.insert.format(time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], self.radio.name,
+                                   *r) for r in cbit_setting] + \
             [self.cbit_list_insert.format(*cbit_list[code]) for code in cbit_list]

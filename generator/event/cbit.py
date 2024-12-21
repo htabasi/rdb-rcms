@@ -37,7 +37,8 @@ class ECBITInserter(InserterGenerator):
         # self.log.debug(f"ECBITInserter: value={value}")
         if value == '0':
             self.cbit_stat = 0
-            query_list = [self.insert.format(str(time_tag)[:23], self.radio.name, *self.no_cbit)]
+            query_list = [self.insert.format(time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3],
+                                             self.radio.name, *self.no_cbit)]
             # query_list.extend(self.status_insert.generate(event_timestamp, event_s_datetime, 'CBIT', self.cbit_stat))
             # self.log.debug(f"ECBITInserter: Query={q}")
             # return query_list
@@ -51,7 +52,8 @@ class ECBITInserter(InserterGenerator):
             # self.error_count += ec
             # self.error_count_resettable += ec
             self.cbit_stat = max(levels)
-            query_list = [self.insert.format(str(time_tag)[:23], self.radio.name, *line) for line in cbit_lines]
+            query_list = [self.insert.format(time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3],
+                                             self.radio.name, *line) for line in cbit_lines]
 
         # self.log.debug(f"ECBITInserter: Query={query}")
         return query_list

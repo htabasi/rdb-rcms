@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 
 
 class StatGenerator:
@@ -80,7 +80,7 @@ class StatGenerator:
                 self.get_update(self.pat, pat)]
 
     def time_date(self, value: str):
-        now = datetime.utcnow().timestamp()
+        now = datetime.now(UTC).timestamp()
         radio_time = datetime.strptime(value.replace('"', ''), '%Y/%m/%d %H:%M:%S').timestamp()
         return [self.get_update('RTCTimeAndDate', now - radio_time)]
 

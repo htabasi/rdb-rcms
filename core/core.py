@@ -6,7 +6,7 @@ from .keeper import Keeper
 from .coordinator import Coordinator
 from .sender import Sender
 from socket import error as SocketError
-from datetime import datetime
+from datetime import datetime, UTC
 
 
 class Core(Base):
@@ -34,7 +34,7 @@ class Core(Base):
             self.update_ind_timers()
             self.update_status_when_connect()
 
-            self.log.debug(f'Update at {datetime.utcnow().timestamp():.3f}: Timers: Connect:{self.connect_time} '
+            self.log.debug(f'Update at {datetime.now(UTC).timestamp():.3f}: Timers: Connect:{self.connect_time} '
                            f'Disconnect:{self.disconnect_time} IndOn:{self.indicator_on} '
                            f'IndOff:{self.indicator_off}')
             # self.log.info(f'Main: self.keep_alive:{self.keep_alive} self.need_to_check:{self.need_to_check}')
@@ -74,7 +74,7 @@ class Core(Base):
 
     def update_ind_timers(self, ts=None):
         set_off = self.on_air ^ (ts is None)
-        ts = datetime.utcnow().timestamp() if ts is None else ts
+        ts = datetime.now(UTC).timestamp() if ts is None else ts
         delta = ts - self.ind_ref
         if set_off:
             self.indicator_off.add(delta)
@@ -104,7 +104,7 @@ class Core(Base):
         except (SocketError, BrokenPipeError, ConnectionRefusedError):
             self.err_send.add()
             self.event_on_send_error(msg)
-            self.event_on_disconnect(datetime.utcnow())
+            self.event_on_disconnect(datetime.now(UTC))
 
     def initiate(self, contain_event_list=False):
         self.sender.group_send(self.initial_commands, contain_event_list)

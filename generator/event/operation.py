@@ -26,5 +26,5 @@ class EOperationInserter(InserterGenerator):
 
     def generate_special(self, time_tag, key, value):
         # self.log.debug(f"{self.__class__.__name__}: key={key}")
-        return ([self.insert.format(key, str(time_tag)[:23], self.radio.name, value)] +
+        return ([self.insert.format(key, time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], self.radio.name, value)] +
                 [self.update_frequency_query.format(int(value) / 1000000, self.radio.name)])

@@ -1,8 +1,4 @@
-import os
-from datetime import datetime
-
-from generator import get_file
-from settings import SQL_INSERT, SQL_UPDATE
+from datetime import datetime, UTC
 
 
 class Status:
@@ -38,7 +34,7 @@ class Status:
     def set_start(self, pid):
         self.log.info(f'Setting start with pid={pid}')
         connection = self.radio.db_connection
-        now = str(datetime.utcnow())[:23]
+        now = datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if self.status['id'] is None:
             query = self.radio.queries.get('IAModuleStatus').format(self.name, now, pid, now)
             connection.execute_non_query(query)
@@ -70,7 +66,7 @@ class Status:
         if self.radio.radio.type == 'TX':
             self.status['UpdateSpecialScheduled'] = int(self.radio.special_planner.is_scheduled)
             self.status['UpdateSpecialExecuting'] = int(self.radio.special_planner.executing)
-        time_tag = datetime.utcnow()
+        time_tag = datetime.now(UTC)
         self.radio.event_on_parameter_updated(time_tag, 'ModuleStatus', self.status)
 
     def update_status_when_disconnect(self):
@@ -80,5 +76,5 @@ class Status:
         # self.status['HealthAlive'] = int(self.radio.health.status())
         self.status['RadioConnected'] = int(self.radio.is_connect)
         self.status['DatabaseConnected'] = int(self.radio.executor.connection.connected)
-        self.radio.optimum_generator.update_module_stat(datetime.utcnow(), self.status)
+        self.radio.optimum_generator.update_module_stat(datetime.now(UTC), self.status)
         self.radio.optimum_generator.update_counter_timer()

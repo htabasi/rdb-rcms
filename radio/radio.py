@@ -1,5 +1,5 @@
 import signal
-from datetime import datetime
+from datetime import datetime, UTC
 from multiprocessing import Queue
 from platform import system
 from time import sleep
@@ -52,7 +52,7 @@ class Radio(Core):
         if not single_mode:
             self.portal = portal
             self.report = {
-                'UpdateTime': datetime.utcnow(),
+                'UpdateTime': datetime.now(UTC),
                 'Alive': True,
                 'RadioConnection': False,
                 'DBStatus': False
@@ -96,10 +96,10 @@ class Radio(Core):
     def update_radio_status(self):
         self.log.warning(f'UpdateRadioStatus: preparer.radio_status = {self.preparer.radio_status}')
         if self.preparer.radio_status is None:
-            self.log.warning(f'UpdateRadioStatus: setting FirstConnection to {str(datetime.utcnow())}')
-            self.executor.add(self.queries.get('IARadioStatus').format(self.radio.name, str(datetime.utcnow())[:23]))
-                # f"Insert Into Application.RadioStatus (Radio_Name, FirstConnection) "
-                #               f"VALUES ('{self.radio.name}', '{str(datetime.utcnow())[:23]}');")
+            self.log.warning(f"UpdateRadioStatus: setting FirstConnection to "
+                             f"{datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]}")
+            q = self.queries.get('IARadioStatus')
+            self.executor.add(q.format(self.radio.name, datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]))
             self.event_list_request = True
         elif self.preparer.radio_status[3] is None:  # EventListCollect -> Is EventList is collected or not?
             self.log.warning(f'UpdateRadioStatus: setting EventListCollect to True')
@@ -176,7 +176,7 @@ class Radio(Core):
 
     def update_manager_status(self):
         if not self.single_mode:
-            self.report['UpdateTime'] = datetime.utcnow()
+            self.report['UpdateTime'] = datetime.now(UTC)
             self.report['Alive'] = self.status()
             self.report['RadioConnection'] = self.is_connect
             self.report['DBStatus'] = self.executor.connection.connected

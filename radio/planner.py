@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from threading import Timer
 
 from base.aggregator import Aggregator
@@ -138,17 +138,17 @@ class SettingsUpdatePlanner(BasePlanner):
                 delay = randint(1, self.max_delay * 60)
                 self.timer = Timer(delay, self.run)
                 self.first_plan = False
-                target_time = datetime.utcnow() + timedelta(seconds=delay)
+                target_time = datetime.now(UTC) + timedelta(seconds=delay)
                 self.log.info(f'First Time Planned to run at {target_time}')
             else:
                 self.timer = Timer(self.interval * 60, self.run)
-                target_time = datetime.utcnow() + timedelta(minutes=self.interval)
+                target_time = datetime.now(UTC) + timedelta(minutes=self.interval)
                 self.log.info(f'Planned to run at {target_time}')
 
             self.timer.daemon = True
             self.timer.start()
-            self.executor.add(f"Update Application.RadioStatus SET NextConfigFetch='{str(target_time)[:23]}'"
-                              f" WHERE Radio_Name='{self.name}';")
+            self.executor.add(f"Update Application.RadioStatus SET NextConfigFetch='"
+                              f"{target_time.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]}' WHERE Radio_Name='{self.name}';")
             self.is_scheduled = True
 
     def run(self):

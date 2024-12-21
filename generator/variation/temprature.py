@@ -20,4 +20,4 @@ class VTemperatureInserter(InserterGenerator):
                                                    special_key=['RCTP'], acceptable_keys=acceptable_keys)
 
     def generate(self, time_tag, key, value) -> list:
-        return [self.insert.format(str(time_tag)[:23], self.radio.name, value[2:])]
+        return [self.insert.format(time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], self.radio.name, value[2:])]

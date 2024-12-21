@@ -39,7 +39,8 @@ class SAccessInserter:
             vs = ''
             for i in access.access:
                 if access.access[i] != '':
-                    vs += self.values.format(str(time_tag)[:23], self.radio.name, i, access.access[i]) + ', '
+                    vs += self.values.format(time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], self.radio.name,
+                                             i, access.access[i]) + ', '
             if vs != '':
                 return [self.statement + vs[:-2] + ';']
             else:

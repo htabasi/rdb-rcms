@@ -1,11 +1,5 @@
-import os
 from datetime import datetime, UTC
-from random import randint
-from time import time
 import pandas as pd
-
-# from generator import get_file
-# from settings import SQL_INSERT_ANALYZE
 
 
 class Transmission:
@@ -53,7 +47,8 @@ class Transmission:
         for key in self.buffer[read_buffer]:
             self.buffer[read_buffer][key].clear()
 
-        return [self.insert.format(all_fields, self.radio.name, str(datetime.now(UTC))[:23], all_values)]
+        return [self.insert.format(all_fields, self.radio.name,
+                                   datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], all_values)]
 
     def calculate_statistics(self, data: list, key: str):
         series = pd.Series(data).astype(float)

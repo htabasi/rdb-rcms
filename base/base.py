@@ -1,7 +1,7 @@
 from threading import Thread
 from socket import socket
 from time import sleep
-from datetime import datetime
+from datetime import datetime, UTC
 
 from base.aggregator import Aggregator
 from .keeper import BaseKeeper
@@ -32,7 +32,7 @@ class Base(Thread):
         self._first_com_id = 10
         self._last_com_id = 999
         self._com_id = self._first_com_id
-        self.ref_time = self.log_start = datetime.utcnow().timestamp()
+        self.ref_time = self.log_start = datetime.now(UTC).timestamp()
         self.connect_time = Aggregator('ConnectTimeSec', float)
         self.disconnect_time = Aggregator('DisconnectTimeSec', float)
         self.log.debug('init: Start')
@@ -129,7 +129,7 @@ class Base(Thread):
         self.disconnect_counter.add()
 
     def update_timers(self, connect: bool):
-        now = datetime.utcnow().timestamp()
+        now = datetime.now(UTC).timestamp()
         if connect:
             self.connect_time.add(now - self.ref_time)
         else:
@@ -148,10 +148,10 @@ class Base(Thread):
             log.debug('Radio Connected')
         except (TimeoutError, OSError) as e:
             self.err_connect.add()
-            self.event_on_disconnect(datetime.utcnow(), update_connect_time=False)
+            self.event_on_disconnect(datetime.now(UTC), update_connect_time=False)
             log.debug(f'Radio Not Connected E: {e.__class__.__name__} {e.args}')
         else:
-            self.event_on_connect(datetime.utcnow())
+            self.event_on_connect(datetime.now(UTC))
             log.debug('Other Threads Started')
 
     def sleep(self):

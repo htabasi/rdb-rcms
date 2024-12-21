@@ -1,8 +1,4 @@
-import os
-from datetime import datetime
-
-from generator import get_file
-from settings import SQL_ANALYZE_UPDATE
+from datetime import datetime, UTC
 
 
 def get_updates(gauges):
@@ -32,7 +28,7 @@ class Updater:
 
     @staticmethod
     def get_date():
-        return str(datetime.utcnow())[:23]
+        return datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
     def reset(self):
         self.reset_date = self.get_date()
@@ -137,8 +133,10 @@ class CounterUpdater(Updater):
             self.gauges.extend([self.root.special_planner.pln_counter, self.root.special_planner.err_counter])
 
         self.category = {'Counter'}
-        self.update = self.queries.get('UACounter') # get_file(os.path.join(SQL_ANALYZE_UPDATE, 'counter.sql'))
-        self.reset_query = self.queries.get('URACounter') # get_file(os.path.join(SQL_ANALYZE_UPDATE, 'reset_counter.sql'))
+        # get_file(os.path.join(SQL_ANALYZE_UPDATE, 'counter.sql'))
+        self.update = self.queries.get('UACounter')
+        # get_file(os.path.join(SQL_ANALYZE_UPDATE, 'reset_counter.sql'))
+        self.reset_query = self.queries.get('URACounter')
 
 
 class TimerUpdater(Updater):
@@ -174,5 +172,7 @@ class TimerUpdater(Updater):
             self.root.operating_hour
         ]
         self.category = {'Timer'}
-        self.update = self.queries.get('UATimer') # get_file(os.path.join(SQL_ANALYZE_UPDATE, 'timer.sql'))
-        self.reset_query = self.queries.get('URATimer') # get_file(os.path.join(SQL_ANALYZE_UPDATE, 'reset_timer.sql'))
+        # get_file(os.path.join(SQL_ANALYZE_UPDATE, 'timer.sql'))
+        self.update = self.queries.get('UATimer')
+        # get_file(os.path.join(SQL_ANALYZE_UPDATE, 'reset_timer.sql'))
+        self.reset_query = self.queries.get('URATimer')

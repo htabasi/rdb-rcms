@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 from threading import Thread
 from time import sleep, time
 
@@ -170,7 +170,7 @@ class Commander(Thread):
             return True
 
     def update_database(self, _id, stat):
-        now = str(datetime.utcnow())[:23]
+        now = datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         execute_no_answer_query(self.connection, self.update.format(now, stat, _id), self.log)
 
     def check_analyzer_command(self):

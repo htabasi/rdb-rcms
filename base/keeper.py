@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 from threading import Thread
 from time import sleep
 from base.aggregator import Aggregator
@@ -40,7 +40,7 @@ class BaseKeeper(Thread):
             if self.base.ping_counter > self.base.ping_counter_disconnection_threshold:
                 self.log.warning('Radio Disconnected due to failure to respond to ping timout packets three times')
                 self.base.need_to_check = True
-                self.base.event_on_disconnect(datetime.utcnow())
+                self.base.event_on_disconnect(datetime.now(UTC))
                 break
 
             self.log.debug('Loop Start')

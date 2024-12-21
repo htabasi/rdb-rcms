@@ -67,7 +67,7 @@ class SStatusInserter(SettingInserter):
                 if self.ignore_equality or self.setting != self.db_setting:
                     # self.log.debug(f"{self.__class__.__name__}: setting collection: {self.setting.collection}")
                     # self.log.debug(f"{self.__class__.__name__}: generated query: {s}")
-                    query = [self.setting.db_insert(str(time_tag)[:23], self.radio.name)]
+                    query = [self.setting.db_insert(time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], self.radio.name)]
                     self.db_setting = self.setting
                     self.setting = self.create_setting()
                     self.log.info(f"{self.__class__.__name__}: Settings Updated")
@@ -83,4 +83,4 @@ class SStatusInserter(SettingInserter):
                 return []
         else:
             # self.log.debug(f"{self.__class__.__name__}: Singular Setting updated.")
-            return [self.setting.single_db_insert(str(time_tag)[:23], self.radio.name, key)]
+            return [self.setting.single_db_insert(time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], self.radio.name, key)]

@@ -81,7 +81,7 @@ class BaseReception(Thread):
                 self.alive_counter += 1
         except (TimeoutError, ConnectionResetError, ConnectionAbortedError, OSError, ConnectionError) as e:
             self.log.debug(f'Radio Disconnected E: {e}')
-            self.base.event_on_disconnect(datetime.utcnow())
+            self.base.event_on_disconnect(datetime.now(UTC))
 
         else:
             self.log.debug('New Packet Received')

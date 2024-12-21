@@ -26,9 +26,9 @@ class EventListInserter(InserterGenerator):
     def generate(self, time_tag, key, value):
         # self.log.debug(f"{self.__class__.__name__}: key={key}")
         if key == 'EVEL':
-            return self.whole_event_list_query_generator(str(time_tag)[:23], value)
+            return self.whole_event_list_query_generator(time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], value)
         else:
-            return self.simple_record_generator(str(time_tag)[:23], value)
+            return self.simple_record_generator(time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], value)
 
     def whole_event_list_query_generator(self, event_s_datetime, value):
         self.log.debug(f"{self.__class__.__name__}: Event List uploading")

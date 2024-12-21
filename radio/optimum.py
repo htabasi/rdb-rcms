@@ -31,7 +31,7 @@ class OptimumGenerator:
     def update_module_stat(self, *args):
         if self.name.startswith('BRG_'):
             self.log.debug(f"Status Updating")
-        kv, value = f"{'UpdateTime'}='{str(args[0])[:23]}', ", args[1]
+        kv, value = f"{'UpdateTime'}='{args[0].strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]}', ", args[1]
         for item in value:
             if item in ['id', 'Name', 'StartTime', 'UpdateTime', 'PID']:
                 continue
@@ -56,6 +56,6 @@ class OptimumGenerator:
 
     def update_disconnection(self, time_tag):
         if not self.disconnection_updated:
-            self.executor.add(self.connection.format(str(time_tag)[:23], self.name))
+            self.executor.add(self.connection.format(time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], self.name))
             self.executor.add(self.connection_stat.format(self.name))
             self.disconnection_updated = True

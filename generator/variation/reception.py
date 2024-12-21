@@ -27,7 +27,8 @@ class VReceptionInserter(InserterGenerator):
     def generate_special(self, time_tag, key, value):
         # self.log.debug(f"{self.__class__.__name__}: key={key}")
         if key == 'FFRS':
-            return [self.insert.format(key, str(time_tag)[:23], self.radio.name, int(value) - 120)]
+            return [self.insert.format(key, time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], self.radio.name,
+                                       int(value) - 120)]
         else:
             return self.generate_indicator_statement(time_tag, value)
 
@@ -49,5 +50,5 @@ class VReceptionInserter(InserterGenerator):
                 self.cum_sq += on_duration
 
             self.prev_sq_stat, self.prev_time = sq_stat, ts
-            return [self.insert.format('SQ, SQ_ON, SQ_OFF, CUM_SQ', str(time_tag)[:23], self.radio.name,
-                                       f'{sq_stat}, {on_duration}, {off_duration}, {self.cum_sq}')]
+            return [self.insert.format('SQ, SQ_ON, SQ_OFF, CUM_SQ', time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3],
+                                       self.radio.name, f'{sq_stat}, {on_duration}, {off_duration}, {self.cum_sq}')]

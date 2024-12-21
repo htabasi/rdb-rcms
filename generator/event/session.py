@@ -36,5 +36,5 @@ class ESessionInserter(InserterGenerator):
         # for session in sessions:
         #     query += self.insert.format(event_s_datetime, self.radio.name, *session)
         # return query
-        return [self.insert.format(str(time_tag)[:23], self.radio.name, *session, number + 1)
+        return [self.insert.format(time_tag.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], self.radio.name, *session, number + 1)
                 for number, session in enumerate(sessions)]

@@ -3,8 +3,9 @@ import pandas as pd
 
 
 class Transmission:
-    def __init__(self, health, radio, queries, log):
-        self.health = health
+    def __init__(self, analyzer, radio, queries, log):
+        self.health = analyzer.health
+        self.dispatcher = analyzer.dispatcher
         self.radio = radio
         self.log = log
         self.category = {'RCTO', 'RCMO', 'RCTV', 'RCVV', 'RCTC'}
@@ -36,19 +37,23 @@ class Transmission:
         read_buffer, self.write_buffer = self.write_buffer, 1 - self.write_buffer
         if len(self.buffer[read_buffer]['RCTC']) == 0:
             return []
-        
-        all_fields, all_values = '', ''
-        for key, data in self.buffer[read_buffer].items():
-            fields, values = self.calculate_statistics(data, self.keys.get(key))
-            all_fields += ', ' + fields
-            all_values += ', ' + values
-        all_fields, all_values = all_fields[2:], all_values[2:]
 
-        for key in self.buffer[read_buffer]:
-            self.buffer[read_buffer][key].clear()
+        try:
+            all_fields, all_values = '', ''
+            for key, data in self.buffer[read_buffer].items():
+                fields, values = self.calculate_statistics(data, self.keys.get(key))
+                all_fields += ', ' + fields
+                all_values += ', ' + values
+            all_fields, all_values = all_fields[2:], all_values[2:]
 
-        return [self.insert.format(all_fields, self.radio.name,
-                                   datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], all_values)]
+            for key in self.buffer[read_buffer]:
+                self.buffer[read_buffer][key].clear()
+            ql = [self.insert.format(all_fields, self.radio.name,
+                                     datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], all_values)]
+        except Exception as e:
+            self.dispatcher.register_message(self.__class__.__name__, e.__class__.__name__, e.args)
+        else:
+            return ql
 
     def calculate_statistics(self, data: list, key: str):
         series = pd.Series(data).astype(float)

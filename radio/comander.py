@@ -15,6 +15,7 @@ class Commander(Thread):
         super().__init__(name=f"{self.radio.name}_Commander", daemon=True)
         self.log = log
         self.core = parent
+        self.dispatcher = parent.dispatcher
         self.select = parent.queries.get('SCHistory').format(self.radio.name)
         self.update = parent.queries.get('UCHistory')
         self.permission = parent.queries.get('SDUser')
@@ -65,6 +66,7 @@ class Commander(Thread):
                     except Exception as e:
                         self.err_command.add()
                         self.log.warning(f'Error executing command {command_args}: {e.__class__.__name__}: {e.args}')
+                        self.dispatcher.register_message(self.__class__.__name__, e.__class__.__name__, e.args)
 
             self.check_analyzer_command()
 
@@ -178,6 +180,7 @@ class Commander(Thread):
             counter, timer = get_simple_row(self.connection, self.analyzer_reset, log=self.log)
         except Exception as e:
             self.log.debug(f'Error on Reading Analyzer Command: {e}')
+            self.dispatcher.register_message(self.__class__.__name__, e.__class__.__name__, e.args)
         else:
             self.log.debug(f'Analyzer Command: counter={counter} timer={timer}')
             if counter:

@@ -12,6 +12,7 @@ class HealthMonitor(Thread):
         self.radio = parent
         self.executor = executor
         self.log = log
+        self.dispatcher = self.radio.dispatcher
         # self.status = {}
         self.buffer = [[], []]
         self.writer = 0
@@ -214,6 +215,7 @@ class HealthMonitor(Thread):
             except Exception as e:
                 self.err_update.add()
                 self.log.exception(f'Error on Query Generation! {e}')
+                self.dispatcher.register_message(self.__class__.__name__, e.__class__.__name__, e.args)
 
             if not self.radio.keep_alive:
                 # self.log.debug(f"Reading {len(self.buffer[self.writer])} new data from latest buffer.")
@@ -248,6 +250,7 @@ class HealthMonitor(Thread):
                 self.err_update.add()
                 self.log.exception(
                     f'Error occurred during query generation for key:{key}, value:{value}: {e}, {e.args}')
+                self.dispatcher.register_message(self.__class__.__name__, e.__class__.__name__, e.args)
             finally:
                 for query in query_list:
                     if query:

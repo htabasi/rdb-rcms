@@ -15,6 +15,7 @@ class BasePlanner:
         self.radio = parent
         self.sender = parent.sender
         self.log = log
+        self.dispatcher = self.radio.dispatcher
         self.interval = interval
         self.max_delay = max_delay if max_delay is not None else interval
         self.is_scheduled, self.first_plan, self.executing = False, True, False
@@ -73,6 +74,7 @@ class TimerUpdatePlanner(BasePlanner):
         except Exception as e:
             self.log.exception(f'Executing Error: {e} {e.args}')
             self.err_counter.add()
+            self.dispatcher.register_message(self.__class__.__name__, e.__class__.__name__, e.args)
         self.executing = False
 
 
@@ -93,6 +95,7 @@ class SpecialSettingUpdatePlanner(BasePlanner):
         except Exception as e:
             self.log.exception(f'Executing Error: {e} {e.args}')
             self.err_counter.add()
+            self.dispatcher.register_message(self.__class__.__name__, e.__class__.__name__, e.args)
         self.executing = False
 
 
@@ -168,4 +171,5 @@ class SettingsUpdatePlanner(BasePlanner):
         except Exception as e:
             self.log.exception(f'Executing Error: {e} {e.args}')
             self.err_counter.add()
+            self.dispatcher.register_message(self.__class__.__name__, e.__class__.__name__, e.args)
         self.executing = False

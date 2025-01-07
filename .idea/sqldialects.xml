@@ -14,5 +14,6 @@
     <file url="file://$PROJECT_DIR$/sql/prepare/setting/access.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/sql/prepare/setting/cbit.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/sql/prepare/setting/inventory.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/sql/select/available_stations.sql" dialect="TSQL" />
   </component>
 </project>

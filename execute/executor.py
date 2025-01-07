@@ -16,6 +16,7 @@ class QueryExecutor(Thread):
         self.alive_counter = self.alive_counter_prev = 0
         self.exe_query = Aggregator('CntQueryExecuted')
         self.err_execute = Aggregator('CntErrorQueryExecution')
+        self.dispatcher = self.radio.dispatcher
         # self.err_execute = self.exe_query = 0
 
         self.wait_to_release_connection = False
@@ -44,6 +45,7 @@ class QueryExecutor(Thread):
             except Exception as e:
                 self.err_execute.add()
                 self.log.exception(f'Error on Sending Queries to database! {e}')
+                self.dispatcher.register_message(self.__class__.__name__, e.__class__.__name__, e.args)
 
             # self.log.debug(f"Buffer {reader}: length = {len(self.buffer[reader])}")
 
@@ -66,6 +68,7 @@ class QueryExecutor(Thread):
         except Exception as e:
             self.err_execute.add()
             self.log.exception(f'Error on adding query! {e}')
+            self.dispatcher.register_message(self.__class__.__name__, e.__class__.__name__, e.args)
 
     def send_buffer(self, buffer: list):
         self.exe_query.add(len(buffer))
@@ -77,5 +80,6 @@ class QueryExecutor(Thread):
                 self.err_execute.add()
                 self.log.exception(f'Error on Query Execution: Query:{sql}\n Number:{e.number}, Level:{e.severity},'
                                    f' State:{e.state}, Message:{e.message}')
+                self.dispatcher.register_message(self.__class__.__name__, e.__class__.__name__, e.args)
 
         # self.log.debug(f"Execution of {sl} query is done.")

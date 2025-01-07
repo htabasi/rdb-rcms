@@ -17,9 +17,11 @@ from radio.planner import SettingsUpdatePlanner, SpecialSettingUpdatePlanner, Ti
 from radio.preparer import RadioPreparer
 from radio.queries import Queries
 from radio.status import Status
+from radio.dispatcher import Dispatcher
 
 _break = False
 _single_mode = True
+_restart = False
 
 
 class Radio(Core):
@@ -28,35 +30,45 @@ class Radio(Core):
     commander: Commander  # Thread Object
     analyzer: Analyzer  # Thread Object
     health: HealthMonitor  # Thread Object
+    dispatcher: Dispatcher  # Thread Object
     setting_planner: SettingsUpdatePlanner  # Include Timer Object
     special_planner: SpecialSettingUpdatePlanner  # Include Timer Object
     timer_planner: TimerUpdatePlanner  # Include Timer Object
     queries: Queries
     portal: Queue
 
-    def __init__(self, name, single_mode, portal=None):
+    def __init__(self, name, single_mode, downward_portal_receiver=None, upward_portal_sender=None):
         import os
 
+        self.dispatcher = Dispatcher(self, name, downward_portal_receiver, upward_portal_sender)
+        self.dispatcher.start()
+        self.dispatcher.set_alive(True)
         self.db_connection = get_connection()
-        self.queries = Queries(self.db_connection)
+        if self.db_connection is None:
+            self.dispatcher.set_db_connect(False)
+        else:
+            self.dispatcher.set_db_connect(self.db_connection.connected)
+        self.queries = Queries(self, self.db_connection)
         self.radio = self.get_identity(name)
         logs = self.get_logs(single_mode)
         super().__init__(self.radio, logs)
+        self.dispatcher.set_log(self.log)
         self.preparer = RadioPreparer(self, self.logs['Preparer'])
         self.module_stat = Status(self, self.logs['Status'], self.preparer.module_status)
         self.module_stat.set_start(os.getpid())
         self.db_connection.close()
         self.log.info(f'initial_commands: {self.initial_commands}')
+        self.queries.log = self.log
 
         self.single_mode = single_mode
-        if not single_mode:
-            self.portal = portal
-            self.report = {
-                'UpdateTime': datetime.now(UTC),
-                'Alive': True,
-                'RadioConnection': False,
-                'DBStatus': False
-            }
+        # if not single_mode:
+        #     self.portal = portal
+        #     self.report = {
+        #         'UpdateTime': datetime.now(UTC),
+        #         'Alive': True,
+        #         'RadioConnection': False,
+        #         'DBStatus': False
+        #     }
         self.try_to_connect_interval = self.preparer.application['ConnectionTryInterval']
         self.check_period = float(self.preparer.application['CoreCheckInterval'])
         self.ping_timeout = self.preparer.application['PingTimeout']
@@ -110,6 +122,7 @@ class Radio(Core):
 
     def event_on_connect(self, time_tag):
         super().event_on_connect(time_tag)
+        self.dispatcher.set_connect()
         self.generator = QueryGenerator(self, self.executor, self.logs['Generator'])
         self.health = HealthMonitor(self, self.executor, self.logs['HealthMonitor'])
         self.commander = Commander(self, self.logs['Commander'])
@@ -165,6 +178,7 @@ class Radio(Core):
 
     def event_on_disconnect(self, time_tag, update_connect_time=True):
         super().event_on_disconnect(time_tag, update_connect_time)
+        self.dispatcher.set_disconnect()
         self.optimum_generator.update_disconnection(time_tag)
 
     def periodic_operation(self):
@@ -172,25 +186,28 @@ class Radio(Core):
         self.setting_planner.make_plan()
         if self.radio.type == 'TX':
             self.special_planner.make_plan()
-        self.update_manager_status()
+        self.dispatcher.set_alive(self.status())
+        # self.update_manager_status()
 
-    def update_manager_status(self):
-        if not self.single_mode:
-            self.report['UpdateTime'] = datetime.now(UTC)
-            self.report['Alive'] = self.status()
-            self.report['RadioConnection'] = self.is_connect
-            self.report['DBStatus'] = self.executor.connection.connected
-            self.portal.put(self.report)
+    # def update_manager_status(self):
+    #     if not self.single_mode:
+    #         self.report['UpdateTime'] = datetime.now(UTC)
+    #         self.report['Alive'] = self.status()
+    #         self.report['RadioConnection'] = self.is_connect
+    #         self.report['DBStatus'] = self.executor.connection.connected
+    #         self.portal.put(self.report)
 
     def periodic_operation_on_disconnection(self):
         self.timer_planner.make_plan()
-        self.update_manager_status()
+        # self.dispatcher.set_alive(self.status())
+        # self.update_manager_status()
 
     def update_status_when_connect(self):
         self.module_stat.update_status()
 
     def update_status_when_disconnect(self):
         self.module_stat.update_status_when_disconnect()
+        self.dispatcher.set_alive(self.status())
 
     def event_on_initiate(self):
         pass
@@ -256,7 +273,10 @@ class Radio(Core):
                 break
             counter -= 1
 
-    def close(self):
+    def close(self, restart=False):
+        if restart:
+            global _restart
+            _restart = True
         self.log.debug(f'Closing App...')
         self.log.info(f'Closing: keep_alive={self.keep_alive} is_connect={self.is_connect}')
         self.keep_alive = self.is_connect = False
@@ -265,8 +285,9 @@ class Radio(Core):
         self.log.info(f'Closing: Time_Planner Canceled')
 
         if hasattr(self, 'keeper'):
-            self.setting_planner.cancel()
-            self.log.info(f'Closing: Setting_Planner Canceled')
+            if hasattr(self, 'setting_planner'):
+                self.setting_planner.cancel()
+                self.log.info(f'Closing: Setting_Planner Canceled')
             if self.radio.type == 'TX':
                 self.special_planner.cancel()
                 self.log.info(f'Closing: Special_Planner Canceled')
@@ -275,6 +296,7 @@ class Radio(Core):
             self.reception.close()
             self.log.info(f'Closing: Close Command sent to Reception')
             self.socket.close()
+            self.dispatcher.set_disconnect()
             self.log.info(f'Closing: Socket Closed')
 
             self.keeper.join()
@@ -284,7 +306,11 @@ class Radio(Core):
             self.generator.join(3)
             self.log.info(f'Closing: Generator Joint')
             self.executor.join(3)
+            self.dispatcher.set_db_connect(False)
             self.log.info(f'Closing: Executor Joint')
+            self.dispatcher.set_alive(False)
+            self.dispatcher.close()
+            self.dispatcher.join(3)
 
         self.log.info(f'Objects are closed')
 
@@ -317,38 +343,43 @@ def _sigpipe_handler(*args):
     _radio.log.error(f'SIGPIPE Detected by {_radio.radio.name} Module! args: {args}')
 
 
-def run(radio_name, single_mode=True, _portal=None):
+def run(radio_name, single_mode=True, _downward_portal_receiver=None, _upward_portal_sender=None):
     from controller.controller import Controller
 
-    controller = Controller(f'temp/.{radio_name}.controller')
-    if controller.allow:
-        global _single_mode, _radio, _break
-        _single_mode = single_mode
-        _radio = Radio(radio_name, single_mode, _portal)
+    global _restart
+    _restart = True
 
-        signal.signal(signal.SIGINT, _signal_handler)
-        signal.signal(signal.SIGTERM, _signal_handler)
-        if system() == 'Windows':
-            signal.signal(signal.SIGBREAK, _signal_handler)
+    while _restart:
+        _restart = False
+        controller = Controller(f'temp/.{radio_name}.controller', verbose=False)
+        if controller.allow:
+            global _single_mode, _radio, _break
+            _single_mode = single_mode
+            _radio = Radio(radio_name, single_mode, _downward_portal_receiver, _upward_portal_sender)
+
+            signal.signal(signal.SIGINT, _signal_handler)
+            signal.signal(signal.SIGTERM, _signal_handler)
+            if system() == 'Windows':
+                signal.signal(signal.SIGBREAK, _signal_handler)
+            else:
+                signal.signal(signal.SIGPIPE, _sigpipe_handler)
+
+            _radio.start()
+            # from time import time
+            # x = time()
+            # print('Start')
+            while _radio.is_alive() and (not _break):
+                # print(f'{" "* 50} {time() - x} {_radio.is_alive()}')
+                _radio.join(2)
+                # print(f'{" "* 50} {time() - x} {_radio.is_alive()}')
+                if _radio.is_alive():
+                    sleep(2)
+
+            # print(f'{" " * 50} {time() - x} {_radio.is_alive()}')
+
+            _radio.join(1)
+            # print(f'{" " * 50} {time() - x} {_radio.is_alive()}')
+            controller.unlock()
+            # print(f'{" " * 50} {time() - x} {_radio.is_alive()}')
         else:
-            signal.signal(signal.SIGPIPE, _sigpipe_handler)
-
-        _radio.start()
-        # from time import time
-        # x = time()
-        # print('Start')
-        while _radio.is_alive() and (not _break):
-            # print(f'{" "* 50} {time() - x} {_radio.is_alive()}')
-            _radio.join(2)
-            # print(f'{" "* 50} {time() - x} {_radio.is_alive()}')
-            if _radio.is_alive():
-                sleep(2)
-
-        # print(f'{" " * 50} {time() - x} {_radio.is_alive()}')
-
-        _radio.join(1)
-        # print(f'{" " * 50} {time() - x} {_radio.is_alive()}')
-        controller.unlock()
-        # print(f'{" " * 50} {time() - x} {_radio.is_alive()}')
-    else:
-        print(f'Another Radio Module for radio {radio_name} is Running!')
+            print(f'Another Radio Module for radio {radio_name} is Running!')

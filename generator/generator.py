@@ -41,6 +41,7 @@ class QueryGenerator(Thread):
         self.buffer = [[], []]
         self.writer = 0
         self.log = log
+        self.dispatcher = self.radio.dispatcher
 
         self.calm = 2.0
         self.alive_counter = self.alive_counter_prev = 0
@@ -118,6 +119,7 @@ class QueryGenerator(Thread):
             except Exception as e:
                 self.err_generate.add()
                 self.log.exception(f'Error on Query Generation! {e}')
+                self.dispatcher.register_message(self.__class__.__name__, e.__class__.__name__, e.args)
 
             # self.log.debug(f"Buffer {reader}: length = {len(self.buffer[reader])}")
 
@@ -148,9 +150,11 @@ class QueryGenerator(Thread):
             except KeyError as e:
                 self.err_generate.add()
                 self.log.exception(f'Mapper Error: {e.args} {e.__traceback__}')
+                self.dispatcher.register_message(self.__class__.__name__, e.__class__.__name__, e.args)
             except Exception as e:
                 self.err_generate.add()
-                self.log.exception(f'Error on Generate Queries or extending query list! {e}')
+                self.log.exception(f'Error on Generate Queries! {e}')
+                self.dispatcher.register_message(self.__class__.__name__, e.__class__.__name__, e.args)
             else:
                 self.log.debug(f'{(time_tag, key, value)}: {query_list}')
                 self.gen_query.add(len(query_list))

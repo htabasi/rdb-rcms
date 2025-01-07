@@ -14,6 +14,7 @@ class Analyzer(Thread):
         self.health = self.radio.health
         self.executor = executor
         self.log = log
+        self.dispatcher = self.radio.dispatcher
 
         self.calm = 5.0
         self.alive_counter = self.alive_counter_prev = 0
@@ -28,11 +29,11 @@ class Analyzer(Thread):
             10: []
         }
         if self.radio.radio.type == 'TX':
-            self.transmission = Transmission(self.health, self.radio.radio, self.radio.queries, self.log)
+            self.transmission = Transmission(self, self.radio.radio, self.radio.queries, self.log)
             self.tasks[3] = [self.transmission, ]
             self.parts.append(self.transmission)
         else:
-            self.reception = Reception(self.health, self.radio.radio, self.radio.queries, self.log)
+            self.reception = Reception(self, self.radio.radio, self.radio.queries, self.log)
             self.tasks[3] = [self.reception, ]
             self.parts.append(self.reception)
 
@@ -57,6 +58,7 @@ class Analyzer(Thread):
             except Exception as e:
                 self.err_generate += 1
                 self.log.exception(f'Error on Query Generation! {e}')
+                self.dispatcher.register_message(self.__class__.__name__, e.__class__.__name__, e.args)
 
             self.alive_counter += 1
             sleep(self.calm)
@@ -73,9 +75,11 @@ class Analyzer(Thread):
                     except KeyError as e:
                         self.err_generate += 1
                         self.log.exception(f'Task Error: {e}')
+                        self.dispatcher.register_message(self.__class__.__name__, e.__class__.__name__, e.args)
                     except Exception as e:
                         self.err_generate += 1
                         self.log.exception(f'Error on Generate Queries or extending query list! {e}')
+                        self.dispatcher.register_message(self.__class__.__name__, e.__class__.__name__, e.args)
                     else:
                         self.log.debug(f'{task.category}: {query_list}')
                         self.gen_query += len(query_list)

@@ -8,7 +8,8 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 class KMeansClusterManager:
-    def __init__(self, radio_name, log):
+    def __init__(self, dispatcher, radio_name, log):
+        self.dispatcher = dispatcher
         self.radio_name = radio_name
         self.log = log
         self.file_name = f'export/reception/{self.radio_name}-data.txt'
@@ -28,6 +29,7 @@ class KMeansClusterManager:
         except Exception as e:
             self.log.error(f'RX Statistics :: {e.__class__.__name__}, args: {e.args} len(data): {len(data)}')
             self.save_data(data)
+            self.dispatcher.register_message(self.__class__.__name__, e.__class__.__name__, e.args)
         else:
             result = all_fields, all_values
         finally:
@@ -75,6 +77,20 @@ class KMeansClusterManager:
         km_result = self.stat_group(scaler, df, 'KMC')
         km_result.reset_index(inplace=True)
         km_result = km_result.merge(dpc, on='KMC', how='left')
+
+        self.log.info(f'KMC :: km_result = \n{km_result}')
+        # KMC  count        mean  median       std     q15    q85   sq         type    duration
+        #  0    3      8 -117.125000  -116.5  1.885092 -119.85 -116.0  1.0        Noise    0.898873
+        #  1    0    966 -115.546584  -116.0  1.546242 -117.00 -115.0  0.0        Noise  143.573405
+        #  2    2     18  -83.771109   -84.0  0.545795  -84.00  -83.0  1.0     Detected    3.581158
+        #  3    1    141    0.385462     0.0  0.589142    0.00    1.0  1.0  Transmitter   30.552619
+
+        types = km_result['type'].unique()
+        final_result = pd.DataFrame()
+        for type_value in types:
+            combined_row = self.combine_rows_by_type(km_result, type_value)
+            final_result = pd.concat([final_result, combined_row], ignore_index=True)
+        self.log.info(f'KMC :: final_result = "{final_result}"')
 
         self.log.debug(f'KMC :: Ready to query construction')
         return self.construction(km_result, sq_data_df, sq_on_exists, sq_off_exists)
@@ -137,8 +153,31 @@ class KMeansClusterManager:
 
         sorted_stats['type'] = '*'
         sorted_stats['type'] = sorted_stats.apply(lambda row: self.evaluate(row.name, row['sq'], row['mean']), axis=1)
-
+        # self.log.info(f'KMC :: sorted_stats = "{sorted_stats}"')
         return sorted_stats
+
+    @staticmethod
+    def combine_rows_by_type(df, type_value):
+        type_id = {'Noise': 0, 'FarAway': 1, 'Detected': 2, 'Transmitter': 3}
+
+        type_df = df[df['type'] == type_value]
+        mean_weighted = np.average(type_df['mean'], weights=type_df['count'])
+        median_weighted = np.median(np.repeat(type_df['median'], type_df['count']))
+        std_weighted = np.sqrt(
+            np.average((type_df['std'] ** 2 + (type_df['mean'] - mean_weighted) ** 2), weights=type_df['count']))
+        sq_weighted = np.average(type_df['sq'], weights=type_df['count'])
+        combined_row = pd.DataFrame(
+            {'KMC': [type_id.get(type_value)],
+             'count': [type_df['count'].sum()],
+             'mean': [mean_weighted],
+             'median': [median_weighted],
+             'std': [std_weighted],
+             'q15': [type_df['q15'].min()],
+             'q85': [type_df['q85'].max()],
+             'sq': [sq_weighted],
+             'type': [type_value],
+             'duration': [type_df['duration'].sum()]})
+        return combined_row
 
     def evaluate(self, index, sq, mean):
         sq = int(sq >= 0.5)
@@ -297,8 +336,9 @@ class KMeansClusterManager:
 
 
 class Reception:
-    def __init__(self, health, radio, queries, log):
-        self.health = health
+    def __init__(self, analyzer, radio, queries, log):
+        self.health = analyzer.health
+        self.dispatcher = analyzer.dispatcher
         self.radio = radio
         self.log = log
         self.category = {'RCRI', 'FFRS'}
@@ -309,7 +349,7 @@ class Reception:
         self.latest_sq, self.sq_start = None, None
         self.file_name = f'export/reception/{self.radio.name}-data.txt'
         self.latest_sq = None
-        self.kmeans = KMeansClusterManager(self.radio.name, log)
+        self.kmeans = KMeansClusterManager(self.dispatcher, self.radio.name, log)
 
     def add(self, key, items):
         time_tag, value = items

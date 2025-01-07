@@ -2,9 +2,13 @@ import os
 from pymssql import _mssql as db
 from pymssql._mssql import MSSQLDatabaseException
 
-from generator import get_file
 from settings import SQL_SELECT
 
+
+def get_file(filename):
+    with open(filename, 'r') as f:
+        query = f.read()
+    return query
 
 def get_connection(log=None, server=None):
     if server is None:
@@ -53,6 +57,24 @@ def get_available_radios(queries):
         result = get_simple_column(connection, queries.get('SRStation'))
 
     return result
+
+def load_stations():
+    connection = get_connection()
+    query = """
+    SELECT Station AS 'name', Max(Frequency_No) AS 'fc' FROM Radio.Radio RR
+         INNER JOIN Radio.Station RS ON RR.Station = RS.Code
+         INNER JOIN Common.StationAvailability as SA ON RS.Availability = SA.id
+    WHERE SA.Status = 'Available'
+    GROUP BY Station;
+    """
+
+    return get_multiple_row(connection, query, as_dict=True)
+
+def load_radios(stations):
+    connection = get_connection()
+    query = f"SELECT Name FROM Radio.Radio WHERE Station IN {stations} ORDER BY Name;"
+
+    return get_simple_column(connection, query)
 
 
 def get_scalar_answer(connection, query, log=None):

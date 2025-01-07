@@ -77,7 +77,7 @@ class Base(Thread):
 
     def status(self):
         stat = self.alive_counter != self.alive_counter_prev
-        # self.log.info(f'Status: Status Update: {self.alive_counter} != {self.alive_counter_prev} => {stat}')
+        self.log.debug(f'Status: Status Update: {self.alive_counter} != {self.alive_counter_prev} => {stat}')
 
         self.alive_counter_prev = self.alive_counter
         return stat

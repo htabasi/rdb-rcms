@@ -3,9 +3,10 @@ import sys
 
 
 class Controller:
-    def __init__(self, filepath, name='', force=False):
+    def __init__(self, filepath, name='', force=False, verbose=True):
         self.path = filepath
         self.name = name
+        self.verbose = verbose
         self.allow = False
         self.clear_content = False
         try:
@@ -68,12 +69,13 @@ class Controller:
         self.controller.close()
 
     def warn(self, pid=None, problem=False):
-        if problem:
-            print(f'Warning: Previous {self.name} Module with pid={pid} is not closed successfully.')
-        elif pid is not None:
-            print(f'Warning: Another {self.name} Module with pid={pid} is running.')
-        else:
-            print(f'Warning: Another {self.name} Module with unknown pid is running.')
+        if self.verbose:
+            if problem:
+                print(f'Warning: Previous {self.name} Module with pid={pid} is not closed successfully.')
+            elif pid is not None:
+                print(f'Warning: Another {self.name} Module with pid={pid} is running.')
+            else:
+                print(f'Warning: Another {self.name} Module with unknown pid is running.')
 
     def clear(self):
         self.controller.seek(0)
